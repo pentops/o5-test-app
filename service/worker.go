@@ -34,6 +34,12 @@ func NewTestWorker(conn sqrlx.Connection, ss *state.StateMachines) (*TestWorker,
 	}, nil
 }
 
+var replyNamespace = uuid.MustParse("7B4D4FB7-28BA-4848-9EE3-4C3B0B2263E6")
+
+func replyID(greetingID string) string {
+	return uuid.NewSHA1(replyNamespace, []byte(greetingID)).String()
+}
+
 func (ww *TestWorker) Greeting(ctx context.Context, req *test_tpb.GreetingMessage) (*emptypb.Empty, error) {
 
 	// TODO: Greeting should reply to a reply topic with the reply, but for now
@@ -43,7 +49,7 @@ func (ww *TestWorker) Greeting(ctx context.Context, req *test_tpb.GreetingMessag
 		Keys: &test_pb.GreetingKeys{
 			GreetingId: req.GreetingId,
 		},
-		EventID:   uuid.NewString(),
+		EventID:   replyID(req.GreetingId),
 		Timestamp: time.Now(),
 		Cause: &psm_pb.Cause{
 			Type: &psm_pb.Cause_ExternalEvent{
