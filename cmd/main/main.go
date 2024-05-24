@@ -72,7 +72,7 @@ func runServe(ctx context.Context, config struct {
 		service.GRPCMiddleware(Version)...,
 	)))
 
-	if err := service.RegisterGRPC(db, grpcServer); err != nil {
+	if err := service.RegisterGRPC(grpcServer, db, Version); err != nil {
 		return err
 	}
 

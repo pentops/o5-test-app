@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package test.v1.service;
+
+import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
+import "psm/list/v1/page.proto";
+import "psm/list/v1/query.proto";
+import "psm/state/v1/annotations.proto";
+import "test/v1/greeting.proto";
+
+option go_package = "github.com/pentops/o5-test-app/gen/test/v1/test_spb";
+
+service GreetingQueryService {
+  option (psm.state.v1.state_query).name = "greeting";
+
+  rpc GetGreeting(GetGreetingRequest) returns (GetGreetingResponse) {
+    option (google.api.http) = {get: "/test/v1/q/greeting/{greeting_id}"};
+    option (psm.state.v1.state_query_method).get = true;
+  }
+
+  rpc ListGreetings(ListGreetingsRequest) returns (ListGreetingsResponse) {
+    option (google.api.http) = {get: "/test/v1/q/greeting"};
+    option (psm.state.v1.state_query_method).list = true;
+  }
+
+  rpc ListGreetingEvents(ListGreetingEventsRequest) returns (ListGreetingEventsResponse) {
+    option (google.api.http) = {get: "/test/v1/q/greeting/{greeting_id}/events"};
+    option (psm.state.v1.state_query_method).list_events = true;
+  }
+}
+
+message GetGreetingRequest {
+  string greeting_id = 1;
+}
+
+message GetGreetingResponse {
+  test.v1.GreetingState greeting = 1;
+}
+
+message ListGreetingsRequest {
+  psm.list.v1.PageRequest page = 100;
+  psm.list.v1.QueryRequest query = 101;
+}
+
+message ListGreetingsResponse {
+  repeated test.v1.GreetingState greetings = 1 [(buf.validate.field).repeated = {max_items: 10}];
+  psm.list.v1.PageResponse page = 100;
+}
+
+message ListGreetingEventsRequest {
+  string greeting_id = 1 [(buf.validate.field).string.uuid = true];
+
+  psm.list.v1.PageRequest page = 100;
+  psm.list.v1.QueryRequest query = 101;
+}
+
+message ListGreetingEventsResponse {
+  repeated test.v1.GreetingEvent events = 1 [(buf.validate.field).repeated = {max_items: 10}];
+  psm.list.v1.PageResponse page = 100;
+}

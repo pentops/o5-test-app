@@ -2,5 +2,5 @@
 
 package test_spb
 
-// Service: TestService
+// Service: GreetingCommandService
 // Method: Hello
