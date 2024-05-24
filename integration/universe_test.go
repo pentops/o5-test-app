@@ -5,16 +5,19 @@ import (
 	"testing"
 
 	"github.com/pentops/flowtest"
+	"github.com/pentops/log.go/log"
 	"github.com/pentops/o5-test-app/gen/test/v1/test_spb"
+	"github.com/pentops/o5-test-app/gen/test/v1/test_tpb"
 	"github.com/pentops/o5-test-app/service"
 	"github.com/pentops/outbox.pg.go/outboxtest"
 	"github.com/pentops/pgtest.go/pgtest"
-	"gopkg.daemonl.com/log"
 )
 
 type Universe struct {
-	Outbox      *outboxtest.OutboxAsserter
-	TestService test_spb.TestServiceClient
+	Outbox          *outboxtest.OutboxAsserter
+	GreetingCommand test_spb.GreetingCommandServiceClient
+	GreetingQuery   test_spb.GreetingQueryServiceClient
+	TestTopic       test_tpb.TestTopicClient
 }
 
 func NewUniverse(t *testing.T) (*flowtest.Stepper[*testing.T], *Universe) {
@@ -50,11 +53,13 @@ func setupUniverse(ctx context.Context, t flowtest.Asserter, uu *Universe) {
 
 	grpcPair := flowtest.NewGRPCPair(t, service.GRPCMiddleware(TestVersion)...)
 
-	if err := service.RegisterGRPC(conn, grpcPair.Server); err != nil {
+	if err := service.RegisterGRPC(grpcPair.Server, conn, TestVersion); err != nil {
 		t.Fatal(err.Error())
 	}
 
-	uu.TestService = test_spb.NewTestServiceClient(grpcPair.Client)
+	uu.GreetingCommand = test_spb.NewGreetingCommandServiceClient(grpcPair.Client)
+	uu.GreetingQuery = test_spb.NewGreetingQueryServiceClient(grpcPair.Client)
+	uu.TestTopic = test_tpb.NewTestTopicClient(grpcPair.Client)
 
 	grpcPair.ServeUntilDone(t, ctx)
 }
