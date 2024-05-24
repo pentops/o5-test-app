@@ -12,4 +12,7 @@ plugins:
     out: .
     opt: paths=import,module=github.com/pentops/o5-test-app
 
+  - name: go-messaging # github.com/pentops/protoc-gen-go-messaging
+    out: .
+    opt: paths=import,module=github.com/pentops/o5-test-app
 
