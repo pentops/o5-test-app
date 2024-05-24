@@ -1,0 +1,14 @@
+---
+packages:
+  - label: Test
+    name: test.v1
+
+options:
+  trimSubPackages:
+    - service
+    - topic
+  wrapOneof: true
+  shortEnums:
+    unspecifiedSuffix: UNSPECIFIED
+    strictUnmarshal: true
+

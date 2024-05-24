@@ -26,7 +26,7 @@ func NewUniverse(t *testing.T) (*flowtest.Stepper[*testing.T], *Universe) {
 	uu := &Universe{}
 
 	stepper.Setup(func(ctx context.Context, t flowtest.Asserter) error {
-		log.DefaultLogger = log.NewCallbackLogger(stepper.Log)
+		log.DefaultLogger = log.NewCallbackLogger(stepper.LevelLog)
 		setupUniverse(ctx, t, uu)
 		return nil
 	})
