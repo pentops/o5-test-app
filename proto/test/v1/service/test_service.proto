@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package test.v1.service;
+
+import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/pentops/o5-test-app/gen/test/v1/test_spb";
+
+service TestService {
+  rpc Hello(HelloRequest) returns (HelloResponse) {
+    option (google.api.http) = {post: "/test/v1/echo"};
+  }
+}
+
+message HelloRequest {
+  string name = 1 [(buf.validate.field).required = true];
+}
+
+message HelloResponse {
+  string message = 1;
+  string app_version = 2;
+}
