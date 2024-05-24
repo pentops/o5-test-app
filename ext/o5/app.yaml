@@ -1,0 +1,41 @@
+---
+name: "o5test"
+
+databases:
+  - name: main
+    postgres:
+      dbName: "o5test"
+      serverGroup: default
+      dbExtensions:
+        - "uuid-ossp"
+
+      migrateContainer:
+        image:
+          name: o5-test-app
+          registry: ghcr.io/pentops
+        command: [migrate]
+        envVars:
+          - name: "POSTGRES_URL"
+            database:
+              databaseName: main
+
+runtimes:
+  - name: main
+    routes:
+      - prefix: "/test/v1/"
+        protocol: ROUTE_PROTOCOL_HTTP
+    containers:
+      - name: main
+        demand: DEMAND_LIGHT
+        image:
+          name: o5-test-app
+          registry: ghcr.io/pentops
+        command: [serve]
+        envVars:
+          - name: "POSTGRES_URL"
+            database:
+              databaseName: main
+          - name: SERVE_ADDR
+            value: ":8080"
+
+
