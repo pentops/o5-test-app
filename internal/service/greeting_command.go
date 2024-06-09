@@ -6,9 +6,9 @@ import (
 
 	sq "github.com/elgris/sqrl"
 	"github.com/google/uuid"
-	"github.com/pentops/o5-test-app/gen/test/v1/test_pb"
-	"github.com/pentops/o5-test-app/gen/test/v1/test_spb"
-	"github.com/pentops/o5-test-app/state"
+	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
+	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
+	"github.com/pentops/o5-test-app/internal/state"
 	"github.com/pentops/sqrlx.go/sqrlx"
 )
 
@@ -61,25 +61,4 @@ func (ss *GreetingCommandService) Hello(ctx context.Context, req *test_spb.Hello
 	return &test_spb.HelloResponse{
 		Greeting: newState,
 	}, nil
-
-	/*
-		msg := &test_tpb.GreetingMessage{
-			Name: req.Name,
-		}
-		err := ss.db.Transact(ctx, &sqrlx.TxOptions{
-			ReadOnly:  false,
-			Retryable: true,
-			Isolation: sql.LevelReadCommitted,
-		}, func(ctx context.Context, tx sqrlx.Transaction) error {
-			return outbox.Send(ctx, tx, msg)
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		return &test_spb.HelloResponse{
-			Message:    "Hello, " + req.Name,
-			AppVersion: "test-app-version",
-		}, nil
-	*/
 }

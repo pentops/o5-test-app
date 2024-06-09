@@ -8,7 +8,7 @@ package test_spb
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	test_pb "github.com/pentops/o5-test-app/gen/test/v1/test_pb"
+	test_pb "github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	psml_pb "github.com/pentops/protostate/gen/list/v1/psml_pb"
 	_ "github.com/pentops/protostate/gen/state/v1/psm_pb"
 	_ "google.golang.org/genproto/googleapis/api/annotations"

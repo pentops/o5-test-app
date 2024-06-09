@@ -8,14 +8,14 @@ import (
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/pentops/log.go/log"
-	"github.com/pentops/o5-test-app/service"
+	"github.com/pentops/o5-test-app/internal/service"
 	"github.com/pentops/runner/commander"
 	"github.com/pressly/goose"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-var Version string
+var version string
 
 func main() {
 
@@ -24,7 +24,7 @@ func main() {
 	mainGroup.Add("serve", commander.NewCommand(runServe))
 	mainGroup.Add("migrate", commander.NewCommand(runMigrate))
 
-	mainGroup.RunMain("testapp", Version)
+	mainGroup.RunMain("testapp", version)
 }
 
 func openDatabase(ctx context.Context, dbURL string) (*sql.DB, error) {

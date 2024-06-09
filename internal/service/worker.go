@@ -7,9 +7,9 @@ import (
 
 	sq "github.com/elgris/sqrl"
 	"github.com/google/uuid"
-	"github.com/pentops/o5-test-app/gen/test/v1/test_pb"
-	"github.com/pentops/o5-test-app/gen/test/v1/test_tpb"
-	"github.com/pentops/o5-test-app/state"
+	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
+	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
+	"github.com/pentops/o5-test-app/internal/state"
 	"github.com/pentops/protostate/gen/state/v1/psm_pb"
 	"github.com/pentops/sqrlx.go/sqrlx"
 	"google.golang.org/protobuf/types/known/emptypb"
