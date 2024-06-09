@@ -5,26 +5,27 @@ run:
 
 linters:
   enable:
+    # Defaults
     - errcheck
-    - exportloopref
-    - gofmt
     - gosimple
     - govet
     - ineffassign
+    - staticcheck
+    - unused
+
+    # Additional
+    - exportloopref
+    - gofmt
     - misspell
     - rowserrcheck
     - sqlclosecheck
-    - staticcheck
     - typecheck
-    - unused
+    - goconst
   disable:
     - wsl
-    - maligned
     - prealloc
     - gochecknoglobals
-    - scopelint
     - unparam
-    - structcheck
   disable-all: false
   presets:
     - bugs
