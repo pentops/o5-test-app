@@ -6,8 +6,10 @@ import (
 	context "context"
 	fmt "fmt"
 	psm_pb "github.com/pentops/protostate/gen/state/v1/psm_pb"
+	pgstore "github.com/pentops/protostate/pgstore"
 	psm "github.com/pentops/protostate/psm"
 	sqrlx "github.com/pentops/sqrlx.go/sqrlx"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 )
 
 // PSM GreetingPSM
@@ -210,42 +212,31 @@ type GreetingPSMTableSpec = psm.PSMTableSpec[
 ]
 
 var DefaultGreetingPSMTableSpec = GreetingPSMTableSpec{
-	State: psm.TableSpec[*GreetingState]{
-		TableName:  "greeting",
-		DataColumn: "state",
-		StoreExtraColumns: func(state *GreetingState) (map[string]interface{}, error) {
-			return map[string]interface{}{}, nil
+	TableMap: psm.TableMap{
+		State: psm.StateTableSpec{
+			TableName: "greeting",
+			Root:      &pgstore.ProtoFieldSpec{ColumnName: "state", PathFromRoot: pgstore.ProtoPathSpec{}},
 		},
-		PKFieldPaths: []string{
-			"keys.greeting_id",
+		Event: psm.EventTableSpec{
+			TableName:     "greeting_event",
+			Root:          &pgstore.ProtoFieldSpec{ColumnName: "data", PathFromRoot: pgstore.ProtoPathSpec{}},
+			ID:            &pgstore.ProtoFieldSpec{ColumnName: "id", PathFromRoot: pgstore.ProtoPathSpec{}},
+			Timestamp:     &pgstore.ProtoFieldSpec{ColumnName: "timestamp", PathFromRoot: pgstore.ProtoPathSpec{}},
+			Sequence:      &pgstore.ProtoFieldSpec{ColumnName: "sequence", PathFromRoot: pgstore.ProtoPathSpec{}},
+			StateSnapshot: &pgstore.ProtoFieldSpec{ColumnName: "state", PathFromRoot: pgstore.ProtoPathSpec{}},
 		},
+		KeyColumns: []psm.KeyColumn{{
+			ColumnName: "greeting_id",
+			ProtoName:  protoreflect.Name("greeting_id"),
+			Primary:    true,
+			Required:   true,
+		}},
 	},
-	Event: psm.TableSpec[*GreetingEvent]{
-		TableName:  "greeting_event",
-		DataColumn: "data",
-		StoreExtraColumns: func(event *GreetingEvent) (map[string]interface{}, error) {
-			metadata := event.Metadata
-			return map[string]interface{}{
-				"id":          metadata.EventId,
-				"timestamp":   metadata.Timestamp,
-				"cause":       metadata.Cause,
-				"sequence":    metadata.Sequence,
-				"greeting_id": event.Keys.GreetingId,
-			}, nil
-		},
-		PKFieldPaths: []string{
-			"metadata.EventId",
-		},
-	},
-	EventPrimaryKey: func(id string, keys *GreetingKeys) (map[string]interface{}, error) {
-		return map[string]interface{}{
-			"id": id,
-		}, nil
-	},
-	PrimaryKey: func(keys *GreetingKeys) (map[string]interface{}, error) {
-		return map[string]interface{}{
-			"id": keys.GreetingId,
-		}, nil
+	KeyValues: func(keys *GreetingKeys) (map[string]string, error) {
+		keyset := map[string]string{
+			"greeting_id": keys.GreetingId,
+		}
+		return keyset, nil
 	},
 }
 

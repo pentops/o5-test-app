@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"net"
 	"time"
 
@@ -27,16 +28,30 @@ func main() {
 	mainGroup.RunMain("testapp", version)
 }
 
-func openDatabase(ctx context.Context, dbURL string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", dbURL)
+type DBConfig struct {
+	PostgresURL  string `env:"POSTGRES_URL"`
+	MaxOpenConns int    `env:"PG_MAX_CONNS" default:"5"`
+	PingTimeout  int    `env:"PG_PING_TIMEOUT_SECONDS" default:"10"`
+}
+
+func (c *DBConfig) OpenDatabase(ctx context.Context) (*sql.DB, error) {
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(c.PingTimeout))
+
+	defer cancel()
+
+	db, err := sql.Open("postgres", c.PostgresURL)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(5)
+	db.SetMaxOpenConns(c.MaxOpenConns)
 
 	for {
-		if err := db.Ping(); err != nil {
+		if err := ctx.Err(); err != nil {
+			return nil, fmt.Errorf("waiting for database: %w", err)
+		}
+		if err := db.PingContext(ctx); err != nil {
 			log.WithError(ctx, err).Error("pinging PG")
 			time.Sleep(time.Second)
 			continue
@@ -46,11 +61,12 @@ func openDatabase(ctx context.Context, dbURL string) (*sql.DB, error) {
 
 	return db, nil
 }
+
 func runMigrate(ctx context.Context, config struct {
+	DBConfig
 	MigrationsDir string `env:"MIGRATIONS_DIR" default:"./ext/db"`
-	PostgresURL   string `env:"POSTGRES_URL"`
 }) error {
-	db, err := openDatabase(ctx, config.PostgresURL)
+	db, err := config.OpenDatabase(ctx)
 	if err != nil {
 		return err
 	}
@@ -59,20 +75,20 @@ func runMigrate(ctx context.Context, config struct {
 }
 
 func runServe(ctx context.Context, config struct {
-	ServeAddr   string `env:"SERVE_ADDR" default:":8080"`
-	PostgresURL string `env:"POSTGRES_URL"`
+	ServeAddr string `env:"SERVE_ADDR" default:":8080"`
+	DBConfig
 }) error {
 
-	db, err := openDatabase(ctx, config.PostgresURL)
+	db, err := config.OpenDatabase(ctx)
 	if err != nil {
 		return err
 	}
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-		service.GRPCMiddleware(Version)...,
+		service.GRPCMiddleware(version)...,
 	)))
 
-	if err := service.RegisterGRPC(grpcServer, db, Version); err != nil {
+	if err := service.RegisterGRPC(grpcServer, db, version); err != nil {
 		return err
 	}
 
