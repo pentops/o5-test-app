@@ -6,9 +6,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pentops/flowtest"
-	"github.com/pentops/o5-test-app/gen/test/v1/test_pb"
-	"github.com/pentops/o5-test-app/gen/test/v1/test_spb"
-	"github.com/pentops/o5-test-app/gen/test/v1/test_tpb"
+	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
+	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
+	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 )
 
 func TestService(t *testing.T) {

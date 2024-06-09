@@ -4,8 +4,8 @@ import (
 	"context"
 
 	sq "github.com/elgris/sqrl"
-	"github.com/pentops/o5-test-app/gen/test/v1/test_spb"
-	"github.com/pentops/o5-test-app/state"
+	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
+	"github.com/pentops/o5-test-app/internal/state"
 	"github.com/pentops/protostate/psm"
 	"github.com/pentops/sqrlx.go/sqrlx"
 )

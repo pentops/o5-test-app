@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pentops/o5-test-app/test/runner"
+	"github.com/pentops/o5-test-app/internal/test/runner"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 	flag.Parse()
 
 	if *envFile != "" {
-		if err := LoadEnv(*envFile); err != nil {
+		if err := loadEnv(*envFile); err != nil {
 			fmt.Printf("LoadEnv: %s\n", err)
 			os.Exit(1)
 		}
@@ -35,7 +35,7 @@ func main() {
 	}
 }
 
-func LoadEnv(filename string) error {
+func loadEnv(filename string) error {
 	if filename == "" {
 		return nil
 	}

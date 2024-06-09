@@ -8,7 +8,7 @@ import (
 	"github.com/pentops/flowtest"
 	"github.com/pentops/flowtest/runner"
 	"github.com/pentops/flowtest/runner/testclient"
-	"github.com/pentops/o5-test-app/genclient/test/v1/test"
+	"github.com/pentops/o5-test-app/internal/genclient/test/v1/test"
 )
 
 type APIConfig struct {

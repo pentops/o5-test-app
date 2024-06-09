@@ -4,7 +4,7 @@ package state
 // Source: github.com/pentops/o5-test-app/genclient/psm/state/v1/state
 
 import (
-	auth "github.com/pentops/o5-test-app/genclient/o5/auth/v1/auth"
+	auth "github.com/pentops/o5-test-app/internal/genclient/o5/auth/v1/auth"
 	time "time"
 )
 
