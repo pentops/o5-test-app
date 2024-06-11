@@ -11,14 +11,14 @@ require (
 	github.com/pentops/go-grpc-helpers v0.0.0-20230815045451-2524ee695ebb
 	github.com/pentops/jsonapi v0.0.0-20240601013239-fb79b612e28e
 	github.com/pentops/log.go v0.0.0-20240523172444-85c9292a83db
-	github.com/pentops/o5-go v0.0.0-20240609002711-65864a0f7d38
-	github.com/pentops/outbox.pg.go v0.0.0-20240606184926-7c7f6ceaabbf
+	github.com/pentops/o5-go v0.0.0-20240610223907-ad5d22e3975f
+	github.com/pentops/o5-messaging.go v0.0.0-20240610220232-02f44a1806f1
 	github.com/pentops/pgtest.go v0.0.0-20240604005819-2035f4562734
-	github.com/pentops/protostate v0.0.0-20240606062858-6ae7d31667ac
+	github.com/pentops/protostate v0.0.0-20240610211526-361e6c3ed773
 	github.com/pentops/runner v0.0.0-20240525192419-d655233635e9
 	github.com/pentops/sqrlx.go v0.0.0-20240523172712-b615a994d8c0
 	github.com/pressly/goose v2.7.0+incompatible
-	google.golang.org/genproto/googleapis/api v0.0.0-20240604185151-ef581f913117
+	google.golang.org/genproto/googleapis/api v0.0.0-20240610135401-a8a62080eff3
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.2-0.20240529085009-ca837e5c658b
 )
@@ -38,5 +38,5 @@ require (
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240604185151-ef581f913117 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240610135401-a8a62080eff3 // indirect
 )

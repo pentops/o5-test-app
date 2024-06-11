@@ -6,10 +6,10 @@ import (
 
 	"github.com/pentops/flowtest"
 	"github.com/pentops/log.go/log"
+	"github.com/pentops/o5-messaging.go/outbox/outboxtest"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 	"github.com/pentops/o5-test-app/internal/service"
-	"github.com/pentops/outbox.pg.go/outboxtest"
 	"github.com/pentops/pgtest.go/pgtest"
 )
 
@@ -32,8 +32,7 @@ func NewUniverse(t *testing.T) (*flowtest.Stepper[*testing.T], *Universe) {
 	})
 
 	stepper.PostStepHook(func(ctx context.Context, t flowtest.Asserter) error {
-		t.Log("POST HOOK")
-		uu.Outbox.AssertNoMessages(t)
+		uu.Outbox.AssertEmpty(t)
 		return nil
 	})
 
