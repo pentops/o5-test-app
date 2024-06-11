@@ -9,7 +9,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/pentops/flowtest v0.0.0-20240607020132-7dda31076e79
 	github.com/pentops/go-grpc-helpers v0.0.0-20230815045451-2524ee695ebb
-	github.com/pentops/jsonapi v0.0.0-20240601013239-fb79b612e28e
+	github.com/pentops/j5 v0.0.0-20240606040938-7f6c198fdc0d
 	github.com/pentops/log.go v0.0.0-20240523172444-85c9292a83db
 	github.com/pentops/o5-go v0.0.0-20240610223907-ad5d22e3975f
 	github.com/pentops/o5-messaging.go v0.0.0-20240610220232-02f44a1806f1
