@@ -5,7 +5,6 @@ databases:
   - name: main
     postgres:
       runOutbox: true
-      dbName: "o5test"
       serverGroup: default
       dbExtensions:
         - "uuid-ossp"
