@@ -12,6 +12,8 @@ import (
 	"github.com/pentops/o5-test-app/internal/state"
 	"github.com/pentops/protostate/gen/state/v1/psm_pb"
 	"github.com/pentops/sqrlx.go/sqrlx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -41,6 +43,15 @@ func replyID(greetingID string) string {
 }
 
 func (ww *TestWorker) Greeting(ctx context.Context, req *test_tpb.GreetingMessage) (*emptypb.Empty, error) {
+
+	if req.WorkerError != nil {
+		if req.WorkerError.Code == 0 {
+			// while 0 means OK, if it is being set in an error that's not
+			// useful, so we are using it for properly un-handled errors
+			return nil, fmt.Errorf("TestError:%s", req.WorkerError.Message)
+		}
+		return nil, status.Error(codes.Code(req.WorkerError.Code), req.WorkerError.Message)
+	}
 
 	// TODO: Greeting should reply to a reply topic with the reply, but for now
 	// we are just going directly to the state machine.

@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 
-	"github.com/pentops/go-grpc-helpers/grpcerror"
 	"github.com/pentops/go-grpc-helpers/protovalidatemw"
 	"github.com/pentops/log.go/grpc_log"
 	"github.com/pentops/log.go/log"
@@ -49,7 +48,7 @@ func RegisterGRPC(server *grpc.Server, conn sqrlx.Connection, appVersion string)
 func GRPCMiddleware(version string) []grpc.UnaryServerInterceptor {
 	return []grpc.UnaryServerInterceptor{
 		grpc_log.UnaryServerInterceptor(log.DefaultContext, log.DefaultTrace, log.DefaultLogger),
-		grpcerror.UnaryServerInterceptor(log.DefaultLogger),
+		//grpcerror.UnaryServerInterceptor(log.DefaultLogger),
 		PSMActionMiddleware(actorExtractor),
 		protovalidatemw.UnaryServerInterceptor(),
 	}

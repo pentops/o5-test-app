@@ -49,8 +49,9 @@ func NewGreetingPSM() (*test_pb.GreetingPSM, error) {
 			event *test_pb.GreetingEventType_Initiated,
 		) error {
 			msg := &test_tpb.GreetingMessage{
-				GreetingId: state.Keys.GreetingId,
-				Name:       event.Name,
+				GreetingId:  state.Keys.GreetingId,
+				Name:        event.Name,
+				WorkerError: event.WorkerError,
 			}
 
 			greetingTopic.Greeting(tb, msg)

@@ -68,9 +68,15 @@ message GreetingEventType {
   message Initiated {
     string name = 1;
     string app_version = 2;
+    TestError worker_error = 3;
   }
 
   message Replied {
     string reply_message = 1;
   }
+}
+
+message TestError {
+  string message = 1;
+  uint32 code = 2;
 }

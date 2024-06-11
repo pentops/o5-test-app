@@ -23,6 +23,13 @@ message HelloRequest {
 
   // Required name of the person to greet.
   string name = 2 [(buf.validate.field).required = true];
+
+  // When not nil, the handler will throw an unhandled error prior to processing the request.
+  test.v1.TestError throw_error = 3;
+
+  // Passed to the request message, the call to this command should succeed, but
+  // handling the resulting side-effect should result in a dead letter
+  test.v1.TestError worker_error = 4;
 }
 
 message HelloResponse {
