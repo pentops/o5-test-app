@@ -69,8 +69,8 @@ github.com/pentops/flowtest v0.0.0-20240607020132-7dda31076e79 h1:KDFU89YeGtsFew
 github.com/pentops/flowtest v0.0.0-20240607020132-7dda31076e79/go.mod h1:5vX1QXxvMqOZb/KiJd4V2STThM6Q9OnHZIxAbv1Pprw=
 github.com/pentops/go-grpc-helpers v0.0.0-20230815045451-2524ee695ebb h1:wuswjiI9CzLUGmLXCjwyXDNCFim4iz1IU0GmTmEerMQ=
 github.com/pentops/go-grpc-helpers v0.0.0-20230815045451-2524ee695ebb/go.mod h1:F3N1VgUmEky7it5iOBkyBbyuXu9Mqb9mfhFGR8FhZVQ=
-github.com/pentops/jsonapi v0.0.0-20240601013239-fb79b612e28e h1:9JpUEGPwUpTbRECqRx2w+FO6zWhjiFBnU/nrMYfUJ64=
-github.com/pentops/jsonapi v0.0.0-20240601013239-fb79b612e28e/go.mod h1:LnBOwoaBuIa4lFlp9dRwIBoFG5AmmPUyp60IGygyTDw=
+github.com/pentops/j5 v0.0.0-20240606040938-7f6c198fdc0d h1:BUlp01oXkGpNXFu6tpu4Sw2jYnFhNii+dRRwEexuy/8=
+github.com/pentops/j5 v0.0.0-20240606040938-7f6c198fdc0d/go.mod h1:qLGLYTzorakB+TN24gHF7Ho73tJ3C/PLVXJG5BRT32Y=
 github.com/pentops/log.go v0.0.0-20240523172444-85c9292a83db h1:+d9Omr3fQ/A7f318vAReTDjPfH4t9XbcnCF8w6TD3Hs=
 github.com/pentops/log.go v0.0.0-20240523172444-85c9292a83db/go.mod h1:UXhrs+VZ6cWZ7b/v8AtuvBZc5nwS5WFHP94JoFrZQA8=
 github.com/pentops/o5-go v0.0.0-20240610223907-ad5d22e3975f h1:A149uQ/EQD2c7hftBqlsKLY4WuCwp/3Wi6Sltw8lImI=
