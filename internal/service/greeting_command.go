@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	sq "github.com/elgris/sqrl"
@@ -10,6 +11,8 @@ import (
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/state"
 	"github.com/pentops/sqrlx.go/sqrlx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type GreetingCommandService struct {
@@ -35,6 +38,15 @@ func NewGreetingCommandService(conn sqrlx.Connection, version string, sm *state.
 
 func (ss *GreetingCommandService) Hello(ctx context.Context, req *test_spb.HelloRequest) (*test_spb.HelloResponse, error) {
 
+	if req.ThrowError != nil {
+		if req.ThrowError.Code == 0 {
+			// while 0 means OK, if it is being set in an error that's not
+			// useful, so we are using it for properly un-handled errors
+			return nil, fmt.Errorf("TestError:%s", req.ThrowError.Message)
+		}
+		return nil, status.Error(codes.Code(req.ThrowError.Code), req.ThrowError.Message)
+	}
+
 	cause, err := CommandCause(ctx)
 	if err != nil {
 		return nil, err
@@ -48,8 +60,9 @@ func (ss *GreetingCommandService) Hello(ctx context.Context, req *test_spb.Hello
 		Timestamp: time.Now(),
 		Cause:     cause,
 		Event: &test_pb.GreetingEventType_Initiated{
-			Name:       req.Name,
-			AppVersion: ss.appVersion,
+			Name:        req.Name,
+			AppVersion:  ss.appVersion,
+			WorkerError: req.WorkerError,
 		},
 	}
 
