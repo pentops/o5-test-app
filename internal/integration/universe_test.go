@@ -6,7 +6,7 @@ import (
 
 	"github.com/pentops/flowtest"
 	"github.com/pentops/log.go/log"
-	"github.com/pentops/o5-messaging.go/outbox/outboxtest"
+	"github.com/pentops/o5-messaging/outbox/outboxtest"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 	"github.com/pentops/o5-test-app/internal/service"
