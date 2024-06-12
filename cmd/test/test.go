@@ -23,7 +23,8 @@ func main() {
 	}
 
 	cfg := &runner.APIConfig{
-		Root:        os.Getenv("O5_E2E_ADDR"),
+		APIRoot:     os.Getenv("O5_E2E_API_ADDR"),
+		MetaRoot:    os.Getenv("O5_E2E_O5_ADDR"),
 		BearerToken: os.Getenv("O5_TOKEN"),
 	}
 

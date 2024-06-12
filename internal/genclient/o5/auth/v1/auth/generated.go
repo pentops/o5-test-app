@@ -7,6 +7,11 @@ import (
 	time "time"
 )
 
+// ClientAuthType Proto: o5.auth.v1.ClientAuthType
+type ClientAuthType struct {
+	Type *ClientAuthType_type `json:"type,omitempty"`
+}
+
 // ClientAuthType_SessionAuth Proto: o5.auth.v1.ClientAuthType.SessionAuth
 type ClientAuthType_SessionAuth struct {
 	SessionManager  string     `json:"sessionManager,omitempty"`
@@ -15,9 +20,10 @@ type ClientAuthType_SessionAuth struct {
 	AuthenticatedAt *time.Time `json:"authenticatedAt,omitempty"`
 }
 
-// Actor Proto: o5.auth.v1.Actor
-type Actor struct {
-	Type *Actor_type `json:"type,omitempty"`
+// ActorType_ApiClient Proto: o5.auth.v1.ActorType.ApiClient
+type ActorType_ApiClient struct {
+	ClientAuth *ClientAuthType `json:"clientAuth,omitempty"`
+	IpAddress  string          `json:"ipAddress,omitempty"`
 }
 
 // Actor_type Proto: o5.auth.v1.Actor.type
@@ -46,14 +52,6 @@ func (s Actor_type) Type() interface{} {
 	return nil
 }
 
-// AuthenticatedActor Proto: o5.auth.v1.AuthenticatedActor
-type AuthenticatedActor struct {
-	Id        string            `json:"id,omitempty"`
-	Type      *ActorType        `json:"type"`
-	Claim     *Claim            `json:"claim"`
-	ActorTags map[string]string `json:"actorTags,omitempty"`
-}
-
 // ActorType Proto: o5.auth.v1.ActorType
 type ActorType struct {
 	Type *ActorType_type `json:"type,omitempty"`
@@ -64,11 +62,6 @@ type ActorType_UserAgent struct {
 	ClientAuth *ClientAuthType `json:"clientAuth,omitempty"`
 	UserAgent  string          `json:"userAgent,omitempty"`
 	IpAddress  string          `json:"ipAddress,omitempty"`
-}
-
-// ClientAuthType Proto: o5.auth.v1.ClientAuthType
-type ClientAuthType struct {
-	Type *ClientAuthType_type `json:"type,omitempty"`
 }
 
 // ClientAuthType_type Proto: o5.auth.v1.ClientAuthType.type
@@ -97,10 +90,35 @@ func (s ClientAuthType_type) Type() interface{} {
 	return nil
 }
 
-// ActorType_ApiClient Proto: o5.auth.v1.ActorType.ApiClient
-type ActorType_ApiClient struct {
-	ClientAuth *ClientAuthType `json:"clientAuth,omitempty"`
-	IpAddress  string          `json:"ipAddress,omitempty"`
+// ClientAuthType_JWTAuth Proto: o5.auth.v1.ClientAuthType.JWTAuth
+type ClientAuthType_JWTAuth struct {
+	JwtId    string     `json:"jwtId,omitempty"`
+	Issuer   string     `json:"issuer,omitempty"`
+	IssuedAt *time.Time `json:"issuedAt,omitempty"`
+}
+
+// Claim Proto: o5.auth.v1.Claim
+type Claim struct {
+	TenantFilter map[string]string `json:"tenantFilter,omitempty"`
+	Scopes       []string          `json:"scopes,omitempty"`
+}
+
+// Actor_NamedActor Proto: o5.auth.v1.Actor.NamedActor
+type Actor_NamedActor struct {
+	Name string `json:"name,omitempty"`
+}
+
+// Actor Proto: o5.auth.v1.Actor
+type Actor struct {
+	Type *Actor_type `json:"type,omitempty"`
+}
+
+// AuthenticatedActor Proto: o5.auth.v1.AuthenticatedActor
+type AuthenticatedActor struct {
+	Id        string            `json:"id,omitempty"`
+	Type      *ActorType        `json:"type"`
+	Claim     *Claim            `json:"claim"`
+	ActorTags map[string]string `json:"actorTags,omitempty"`
 }
 
 // ActorType_type Proto: o5.auth.v1.ActorType.type
@@ -127,22 +145,4 @@ func (s ActorType_type) Type() interface{} {
 		return s.ApiClient
 	}
 	return nil
-}
-
-// ClientAuthType_JWTAuth Proto: o5.auth.v1.ClientAuthType.JWTAuth
-type ClientAuthType_JWTAuth struct {
-	JwtId    string     `json:"jwtId,omitempty"`
-	Issuer   string     `json:"issuer,omitempty"`
-	IssuedAt *time.Time `json:"issuedAt,omitempty"`
-}
-
-// Claim Proto: o5.auth.v1.Claim
-type Claim struct {
-	TenantFilter map[string]string `json:"tenantFilter,omitempty"`
-	Scopes       []string          `json:"scopes,omitempty"`
-}
-
-// Actor_NamedActor Proto: o5.auth.v1.Actor.NamedActor
-type Actor_NamedActor struct {
-	Name string `json:"name,omitempty"`
 }

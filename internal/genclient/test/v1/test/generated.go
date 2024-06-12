@@ -82,15 +82,37 @@ func (s GreetingCommandService) Hello(ctx context.Context, req *HelloRequest) (*
 	return resp, nil
 }
 
+// GreetingEventType_Initiated Proto: test.v1.GreetingEventType.Initiated
+type GreetingEventType_Initiated struct {
+	Name        string     `json:"name,omitempty"`
+	AppVersion  string     `json:"appVersion,omitempty"`
+	WorkerError *TestError `json:"workerError,omitempty"`
+}
+
 // HelloRequest
 type HelloRequest struct {
-	GreetingId string `json:"greetingId,omitempty"`
-	Name       string `json:"name"`
+	GreetingId  string     `json:"greetingId,omitempty"`
+	Name        string     `json:"name"`
+	ThrowError  *TestError `json:"throwError,omitempty"`
+	WorkerError *TestError `json:"workerError,omitempty"`
+}
+
+// HelloResponse
+type HelloResponse struct {
+	Greeting *GreetingState `json:"greeting,omitempty"`
 }
 
 // GetGreetingRequest
 type GetGreetingRequest struct {
 	GreetingId string `json:"-" path:"greetingId"`
+}
+
+// GreetingState Proto: test.v1.GreetingState
+type GreetingState struct {
+	Metadata   *state.StateMetadata `json:"metadata"`
+	GreetingId string               `json:"greetingId,omitempty"`
+	Status     string               `json:"status,omitempty"`
+	Data       *GreetingStateData   `json:"data,omitempty"`
 }
 
 // ListGreetingsResponse
@@ -110,15 +132,91 @@ func (s ListGreetingsResponse) GetItems() []*GreetingState {
 	return s.Greetings
 }
 
+// GreetingEventType Proto: test.v1.GreetingEventType
+type GreetingEventType struct {
+	Type *GreetingEventType_type `json:"type,omitempty"`
+}
+
+// GreetingEventType_Replied Proto: test.v1.GreetingEventType.Replied
+type GreetingEventType_Replied struct {
+	ReplyMessage string `json:"replyMessage,omitempty"`
+}
+
 // GetGreetingResponse
 type GetGreetingResponse struct {
 	Greeting *GreetingState `json:"greeting,omitempty"`
 }
 
-// GreetingEventType_Initiated Proto: test.v1.GreetingEventType.Initiated
-type GreetingEventType_Initiated struct {
-	Name       string `json:"name,omitempty"`
-	AppVersion string `json:"appVersion,omitempty"`
+// GreetingEvent Proto: test.v1.GreetingEvent
+type GreetingEvent struct {
+	Metadata   *state.EventMetadata `json:"metadata"`
+	GreetingId string               `json:"greetingId,omitempty"`
+	Event      *GreetingEventType   `json:"event"`
+}
+
+// ListGreetingEventsRequest
+type ListGreetingEventsRequest struct {
+	GreetingId string             `json:"-" path:"greetingId"`
+	Page       *list.PageRequest  `json:"-" query:"page"`
+	Query      *list.QueryRequest `json:"-" query:"query"`
+}
+
+func (s ListGreetingEventsRequest) QueryParameters() (url.Values, error) {
+	values := url.Values{}
+	if s.Page != nil {
+		bb, err := json.Marshal(s.Page)
+		if err != nil {
+			return nil, err
+		}
+		values.Set("page", string(bb))
+	}
+	if s.Query != nil {
+		bb, err := json.Marshal(s.Query)
+		if err != nil {
+			return nil, err
+		}
+		values.Set("query", string(bb))
+	}
+	return values, nil
+}
+
+func (s *ListGreetingEventsRequest) SetPageToken(pageToken string) {
+	if s.Page == nil {
+		s.Page = &list.PageRequest{}
+	}
+	s.Page.Token = &pageToken
+}
+
+// ListGreetingsRequest
+type ListGreetingsRequest struct {
+	Page  *list.PageRequest  `json:"-" query:"page"`
+	Query *list.QueryRequest `json:"-" query:"query"`
+}
+
+func (s ListGreetingsRequest) QueryParameters() (url.Values, error) {
+	values := url.Values{}
+	if s.Page != nil {
+		bb, err := json.Marshal(s.Page)
+		if err != nil {
+			return nil, err
+		}
+		values.Set("page", string(bb))
+	}
+	if s.Query != nil {
+		bb, err := json.Marshal(s.Query)
+		if err != nil {
+			return nil, err
+		}
+		values.Set("query", string(bb))
+	}
+	return values, nil
+}
+
+func (s *ListGreetingsRequest) SetPageToken(pageToken string) {
+	if s.Page == nil {
+		s.Page = &list.PageRequest{}
+	}
+	s.Page.Token = &pageToken
 }
 
 // ListGreetingEventsResponse
@@ -164,99 +262,10 @@ func (s GreetingEventType_type) Type() interface{} {
 	return nil
 }
 
-// ListGreetingsRequest
-type ListGreetingsRequest struct {
-	Page  *list.PageRequest  `json:"-" query:"page"`
-	Query *list.QueryRequest `json:"-" query:"query"`
-}
-
-func (s ListGreetingsRequest) QueryParameters() (url.Values, error) {
-	values := url.Values{}
-	if s.Page != nil {
-		bb, err := json.Marshal(s.Page)
-		if err != nil {
-			return nil, err
-		}
-		values.Set("page", string(bb))
-	}
-	if s.Query != nil {
-		bb, err := json.Marshal(s.Query)
-		if err != nil {
-			return nil, err
-		}
-		values.Set("query", string(bb))
-	}
-	return values, nil
-}
-
-func (s *ListGreetingsRequest) SetPageToken(pageToken string) {
-	if s.Page == nil {
-		s.Page = &list.PageRequest{}
-	}
-	s.Page.Token = &pageToken
-}
-
-// ListGreetingEventsRequest
-type ListGreetingEventsRequest struct {
-	GreetingId string             `json:"-" path:"greetingId"`
-	Page       *list.PageRequest  `json:"-" query:"page"`
-	Query      *list.QueryRequest `json:"-" query:"query"`
-}
-
-func (s ListGreetingEventsRequest) QueryParameters() (url.Values, error) {
-	values := url.Values{}
-	if s.Page != nil {
-		bb, err := json.Marshal(s.Page)
-		if err != nil {
-			return nil, err
-		}
-		values.Set("page", string(bb))
-	}
-	if s.Query != nil {
-		bb, err := json.Marshal(s.Query)
-		if err != nil {
-			return nil, err
-		}
-		values.Set("query", string(bb))
-	}
-	return values, nil
-}
-
-func (s *ListGreetingEventsRequest) SetPageToken(pageToken string) {
-	if s.Page == nil {
-		s.Page = &list.PageRequest{}
-	}
-	s.Page.Token = &pageToken
-}
-
-// GreetingEvent Proto: test.v1.GreetingEvent
-type GreetingEvent struct {
-	Metadata   *state.EventMetadata `json:"metadata"`
-	GreetingId string               `json:"greetingId,omitempty"`
-	Event      *GreetingEventType   `json:"event"`
-}
-
-// GreetingEventType Proto: test.v1.GreetingEventType
-type GreetingEventType struct {
-	Type *GreetingEventType_type `json:"type,omitempty"`
-}
-
-// GreetingEventType_Replied Proto: test.v1.GreetingEventType.Replied
-type GreetingEventType_Replied struct {
-	ReplyMessage string `json:"replyMessage,omitempty"`
-}
-
-// HelloResponse
-type HelloResponse struct {
-	Greeting *GreetingState `json:"greeting,omitempty"`
-}
-
-// GreetingState Proto: test.v1.GreetingState
-type GreetingState struct {
-	Metadata   *state.StateMetadata `json:"metadata"`
-	GreetingId string               `json:"greetingId,omitempty"`
-	Status     string               `json:"status,omitempty"`
-	Data       *GreetingStateData   `json:"data,omitempty"`
+// TestError Proto: test.v1.TestError
+type TestError struct {
+	Message string `json:"message,omitempty"`
+	Code    int64  `json:"code,omitempty"`
 }
 
 // GreetingStateData Proto: test.v1.GreetingStateData
