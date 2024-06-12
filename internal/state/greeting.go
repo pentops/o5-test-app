@@ -3,7 +3,7 @@ package state
 import (
 	"context"
 
-	"github.com/pentops/o5-messaging.go/o5msg"
+	"github.com/pentops/o5-messaging/o5msg"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 	"github.com/pentops/protostate/psm"

@@ -7,6 +7,7 @@ deps:
   - buf.build/pentops/listify
   - buf.build/pentops/protostate
   - buf.build/pentops/j5
+  - buf.build/pentops/messaging
 
 breaking:
   use:

@@ -8,7 +8,7 @@ package test_tpb
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/pentops/o5-go/messaging/v1/messaging_pb"
+	_ "github.com/pentops/o5-messaging/gen/o5/messaging/v1/messaging_pb"
 	test_pb "github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
