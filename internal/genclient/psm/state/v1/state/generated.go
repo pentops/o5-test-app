@@ -8,6 +8,45 @@ import (
 	time "time"
 )
 
+// CommandCause Proto: psm.state.v1.CommandCause
+type CommandCause struct {
+	MethodName string      `json:"methodName,omitempty"`
+	Actor      *auth.Actor `json:"actor,omitempty"`
+}
+
+// ExternalEventCause Proto: psm.state.v1.ExternalEventCause
+type ExternalEventCause struct {
+	SystemName string  `json:"systemName,omitempty"`
+	EventName  string  `json:"eventName,omitempty"`
+	ExternalId *string `json:"externalId,omitempty"`
+}
+
+// ReplyCause Proto: psm.state.v1.ReplyCause
+type ReplyCause struct {
+	Request *PSMEventCause `json:"request,omitempty"`
+	Async   bool           `json:"async"`
+}
+
+// StateMetadata Proto: psm.state.v1.StateMetadata
+type StateMetadata struct {
+	CreatedAt    *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt    *time.Time `json:"updatedAt,omitempty"`
+	LastSequence int64      `json:"lastSequence,omitempty"`
+}
+
+// EventMetadata Proto: psm.state.v1.EventMetadata
+type EventMetadata struct {
+	EventId   string     `json:"eventId,omitempty"`
+	Sequence  int64      `json:"sequence,omitempty"`
+	Timestamp *time.Time `json:"timestamp"`
+	Cause     *Cause     `json:"cause,omitempty"`
+}
+
+// Cause Proto: psm.state.v1.Cause
+type Cause struct {
+	Type *Cause_type `json:"type,omitempty"`
+}
+
 // Cause_type Proto: psm.state.v1.Cause.type
 type Cause_type struct {
 	PsmEvent      *PSMEventCause      `json:"psmEvent,omitempty"`
@@ -52,43 +91,4 @@ func (s Cause_type) Type() interface{} {
 type PSMEventCause struct {
 	EventId      string `json:"eventId,omitempty"`
 	StateMachine string `json:"stateMachine,omitempty"`
-}
-
-// CommandCause Proto: psm.state.v1.CommandCause
-type CommandCause struct {
-	MethodName string      `json:"methodName,omitempty"`
-	Actor      *auth.Actor `json:"actor,omitempty"`
-}
-
-// ExternalEventCause Proto: psm.state.v1.ExternalEventCause
-type ExternalEventCause struct {
-	SystemName string  `json:"systemName,omitempty"`
-	EventName  string  `json:"eventName,omitempty"`
-	ExternalId *string `json:"externalId,omitempty"`
-}
-
-// ReplyCause Proto: psm.state.v1.ReplyCause
-type ReplyCause struct {
-	Request *PSMEventCause `json:"request,omitempty"`
-	Async   bool           `json:"async"`
-}
-
-// StateMetadata Proto: psm.state.v1.StateMetadata
-type StateMetadata struct {
-	CreatedAt    *time.Time `json:"createdAt,omitempty"`
-	UpdatedAt    *time.Time `json:"updatedAt,omitempty"`
-	LastSequence int64      `json:"lastSequence,omitempty"`
-}
-
-// EventMetadata Proto: psm.state.v1.EventMetadata
-type EventMetadata struct {
-	EventId   string     `json:"eventId,omitempty"`
-	Sequence  int64      `json:"sequence,omitempty"`
-	Timestamp *time.Time `json:"timestamp"`
-	Cause     *Cause     `json:"cause,omitempty"`
-}
-
-// Cause Proto: psm.state.v1.Cause
-type Cause struct {
-	Type *Cause_type `json:"type,omitempty"`
 }
