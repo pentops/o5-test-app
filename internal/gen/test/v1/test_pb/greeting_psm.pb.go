@@ -8,7 +8,6 @@ import (
 	psm_pb "github.com/pentops/protostate/gen/state/v1/psm_pb"
 	psm "github.com/pentops/protostate/psm"
 	sqrlx "github.com/pentops/sqrlx.go/sqrlx"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 )
 
 // PSM GreetingPSM
@@ -23,15 +22,6 @@ type GreetingPSM = psm.StateMachine[
 ]
 
 type GreetingPSMDB = psm.DBStateMachine[
-	*GreetingKeys,      // implements psm.IKeyset
-	*GreetingState,     // implements psm.IState
-	GreetingStatus,     // implements psm.IStatusEnum
-	*GreetingStateData, // implements psm.IStateData
-	*GreetingEvent,     // implements psm.IEvent
-	GreetingPSMEvent,   // implements psm.IInnerEvent
-]
-
-type GreetingPSMEventer = psm.Eventer[
 	*GreetingKeys,      // implements psm.IKeyset
 	*GreetingState,     // implements psm.IState
 	GreetingStatus,     // implements psm.IStatusEnum
@@ -67,6 +57,12 @@ func (msg *GreetingKeys) PSMIsSet() bool {
 // PSMFullName returns the full name of state machine with package prefix
 func (msg *GreetingKeys) PSMFullName() string {
 	return "test.v1.greeting"
+}
+func (msg *GreetingKeys) PSMKeyValues() (map[string]string, error) {
+	keyset := map[string]string{
+		"greeting_id": msg.GreetingId,
+	}
+	return keyset, nil
 }
 
 // EXTEND GreetingState with the psm.IState interface
@@ -201,45 +197,7 @@ func (*GreetingEventType_Replied) PSMEventKey() GreetingPSMEventKey {
 	return GreetingPSMEventReplied
 }
 
-type GreetingPSMTableSpec = psm.PSMTableSpec[
-	*GreetingKeys,      // implements psm.IKeyset
-	*GreetingState,     // implements psm.IState
-	GreetingStatus,     // implements psm.IStatusEnum
-	*GreetingStateData, // implements psm.IStateData
-	*GreetingEvent,     // implements psm.IEvent
-	GreetingPSMEvent,   // implements psm.IInnerEvent
-]
-
-var DefaultGreetingPSMTableSpec = GreetingPSMTableSpec{
-	TableMap: psm.TableMap{
-		State: psm.StateTableSpec{
-			TableName: "greeting",
-			Root:      &psm.FieldSpec{ColumnName: "state"},
-		},
-		Event: psm.EventTableSpec{
-			TableName:     "greeting_event",
-			Root:          &psm.FieldSpec{ColumnName: "data"},
-			ID:            &psm.FieldSpec{ColumnName: "id"},
-			Timestamp:     &psm.FieldSpec{ColumnName: "timestamp"},
-			Sequence:      &psm.FieldSpec{ColumnName: "sequence"},
-			StateSnapshot: &psm.FieldSpec{ColumnName: "state"},
-		},
-		KeyColumns: []psm.KeyColumn{{
-			ColumnName: "greeting_id",
-			ProtoName:  protoreflect.Name("greeting_id"),
-			Primary:    true,
-			Required:   true,
-		}},
-	},
-	KeyValues: func(keys *GreetingKeys) (map[string]string, error) {
-		keyset := map[string]string{
-			"greeting_id": keys.GreetingId,
-		}
-		return keyset, nil
-	},
-}
-
-func DefaultGreetingPSMConfig() *psm.StateMachineConfig[
+func GreetingPSMBuilder() *psm.StateMachineConfig[
 	*GreetingKeys,      // implements psm.IKeyset
 	*GreetingState,     // implements psm.IState
 	GreetingStatus,     // implements psm.IStatusEnum
@@ -247,35 +205,17 @@ func DefaultGreetingPSMConfig() *psm.StateMachineConfig[
 	*GreetingEvent,     // implements psm.IEvent
 	GreetingPSMEvent,   // implements psm.IInnerEvent
 ] {
-	return psm.NewStateMachineConfig[
+	return &psm.StateMachineConfig[
 		*GreetingKeys,      // implements psm.IKeyset
 		*GreetingState,     // implements psm.IState
 		GreetingStatus,     // implements psm.IStatusEnum
 		*GreetingStateData, // implements psm.IStateData
 		*GreetingEvent,     // implements psm.IEvent
 		GreetingPSMEvent,   // implements psm.IInnerEvent
-	](DefaultGreetingPSMTableSpec)
+	]{}
 }
 
-func NewGreetingPSM(config *psm.StateMachineConfig[
-	*GreetingKeys,      // implements psm.IKeyset
-	*GreetingState,     // implements psm.IState
-	GreetingStatus,     // implements psm.IStatusEnum
-	*GreetingStateData, // implements psm.IStateData
-	*GreetingEvent,     // implements psm.IEvent
-	GreetingPSMEvent,   // implements psm.IInnerEvent
-]) (*GreetingPSM, error) {
-	return psm.NewStateMachine[
-		*GreetingKeys,      // implements psm.IKeyset
-		*GreetingState,     // implements psm.IState
-		GreetingStatus,     // implements psm.IStatusEnum
-		*GreetingStateData, // implements psm.IStateData
-		*GreetingEvent,     // implements psm.IEvent
-		GreetingPSMEvent,   // implements psm.IInnerEvent
-	](config)
-}
-
-func GreetingPSMMutation[SE GreetingPSMEvent](cb func(*GreetingStateData, SE) error) psm.PSMMutationFunc[
+func GreetingPSMMutation[SE GreetingPSMEvent](cb func(*GreetingStateData, SE) error) psm.TransitionMutation[
 	*GreetingKeys,      // implements psm.IKeyset
 	*GreetingState,     // implements psm.IState
 	GreetingStatus,     // implements psm.IStatusEnum
@@ -284,7 +224,7 @@ func GreetingPSMMutation[SE GreetingPSMEvent](cb func(*GreetingStateData, SE) er
 	GreetingPSMEvent,   // implements psm.IInnerEvent
 	SE,                 // Specific event type for the transition
 ] {
-	return psm.PSMMutationFunc[
+	return psm.TransitionMutation[
 		*GreetingKeys,      // implements psm.IKeyset
 		*GreetingState,     // implements psm.IState
 		GreetingStatus,     // implements psm.IStatusEnum
@@ -304,7 +244,7 @@ type GreetingPSMHookBaton = psm.HookBaton[
 	GreetingPSMEvent,   // implements psm.IInnerEvent
 ]
 
-func GreetingPSMHook[SE GreetingPSMEvent](cb func(context.Context, sqrlx.Transaction, GreetingPSMHookBaton, *GreetingState, SE) error) psm.PSMHookFunc[
+func GreetingPSMLogicHook[SE GreetingPSMEvent](cb func(context.Context, GreetingPSMHookBaton, *GreetingState, SE) error) psm.TransitionLogicHook[
 	*GreetingKeys,      // implements psm.IKeyset
 	*GreetingState,     // implements psm.IState
 	GreetingStatus,     // implements psm.IStatusEnum
@@ -313,7 +253,7 @@ func GreetingPSMHook[SE GreetingPSMEvent](cb func(context.Context, sqrlx.Transac
 	GreetingPSMEvent,   // implements psm.IInnerEvent
 	SE,                 // Specific event type for the transition
 ] {
-	return psm.PSMHookFunc[
+	return psm.TransitionLogicHook[
 		*GreetingKeys,      // implements psm.IKeyset
 		*GreetingState,     // implements psm.IState
 		GreetingStatus,     // implements psm.IStatusEnum
@@ -323,7 +263,55 @@ func GreetingPSMHook[SE GreetingPSMEvent](cb func(context.Context, sqrlx.Transac
 		SE,                 // Specific event type for the transition
 	](cb)
 }
-func GreetingPSMGeneralHook(cb func(context.Context, sqrlx.Transaction, GreetingPSMHookBaton, *GreetingState, *GreetingEvent) error) psm.GeneralStateHook[
+func GreetingPSMDataHook[SE GreetingPSMEvent](cb func(context.Context, sqrlx.Transaction, *GreetingState, SE) error) psm.TransitionDataHook[
+	*GreetingKeys,      // implements psm.IKeyset
+	*GreetingState,     // implements psm.IState
+	GreetingStatus,     // implements psm.IStatusEnum
+	*GreetingStateData, // implements psm.IStateData
+	*GreetingEvent,     // implements psm.IEvent
+	GreetingPSMEvent,   // implements psm.IInnerEvent
+	SE,                 // Specific event type for the transition
+] {
+	return psm.TransitionDataHook[
+		*GreetingKeys,      // implements psm.IKeyset
+		*GreetingState,     // implements psm.IState
+		GreetingStatus,     // implements psm.IStatusEnum
+		*GreetingStateData, // implements psm.IStateData
+		*GreetingEvent,     // implements psm.IEvent
+		GreetingPSMEvent,   // implements psm.IInnerEvent
+		SE,                 // Specific event type for the transition
+	](cb)
+}
+func GreetingPSMLinkHook[SE GreetingPSMEvent, DK psm.IKeyset, DIE psm.IInnerEvent](
+	linkDestination psm.LinkDestination[DK, DIE],
+	cb func(context.Context, *GreetingState, SE, func(DK, DIE)) error,
+) psm.LinkHook[
+	*GreetingKeys,      // implements psm.IKeyset
+	*GreetingState,     // implements psm.IState
+	GreetingStatus,     // implements psm.IStatusEnum
+	*GreetingStateData, // implements psm.IStateData
+	*GreetingEvent,     // implements psm.IEvent
+	GreetingPSMEvent,   // implements psm.IInnerEvent
+	SE,                 // Specific event type for the transition
+	DK,                 // Destination Keys
+	DIE,                // Destination Inner Event
+] {
+	return psm.LinkHook[
+		*GreetingKeys,      // implements psm.IKeyset
+		*GreetingState,     // implements psm.IState
+		GreetingStatus,     // implements psm.IStatusEnum
+		*GreetingStateData, // implements psm.IStateData
+		*GreetingEvent,     // implements psm.IEvent
+		GreetingPSMEvent,   // implements psm.IInnerEvent
+		SE,                 // Specific event type for the transition
+		DK,                 // Destination Keys
+		DIE,                // Destination Inner Event
+	]{
+		Derive:      cb,
+		Destination: linkDestination,
+	}
+}
+func GreetingPSMGeneralLogicHook(cb func(context.Context, GreetingPSMHookBaton, *GreetingState, *GreetingEvent) error) psm.GeneralLogicHook[
 	*GreetingKeys,      // implements psm.IKeyset
 	*GreetingState,     // implements psm.IState
 	GreetingStatus,     // implements psm.IStatusEnum
@@ -331,7 +319,41 @@ func GreetingPSMGeneralHook(cb func(context.Context, sqrlx.Transaction, Greeting
 	*GreetingEvent,     // implements psm.IEvent
 	GreetingPSMEvent,   // implements psm.IInnerEvent
 ] {
-	return psm.GeneralStateHook[
+	return psm.GeneralLogicHook[
+		*GreetingKeys,      // implements psm.IKeyset
+		*GreetingState,     // implements psm.IState
+		GreetingStatus,     // implements psm.IStatusEnum
+		*GreetingStateData, // implements psm.IStateData
+		*GreetingEvent,     // implements psm.IEvent
+		GreetingPSMEvent,   // implements psm.IInnerEvent
+	](cb)
+}
+func GreetingPSMGeneralStateDataHook(cb func(context.Context, sqrlx.Transaction, *GreetingState) error) psm.GeneralStateDataHook[
+	*GreetingKeys,      // implements psm.IKeyset
+	*GreetingState,     // implements psm.IState
+	GreetingStatus,     // implements psm.IStatusEnum
+	*GreetingStateData, // implements psm.IStateData
+	*GreetingEvent,     // implements psm.IEvent
+	GreetingPSMEvent,   // implements psm.IInnerEvent
+] {
+	return psm.GeneralStateDataHook[
+		*GreetingKeys,      // implements psm.IKeyset
+		*GreetingState,     // implements psm.IState
+		GreetingStatus,     // implements psm.IStatusEnum
+		*GreetingStateData, // implements psm.IStateData
+		*GreetingEvent,     // implements psm.IEvent
+		GreetingPSMEvent,   // implements psm.IInnerEvent
+	](cb)
+}
+func GreetingPSMGeneralEventDataHook(cb func(context.Context, sqrlx.Transaction, *GreetingState, *GreetingEvent) error) psm.GeneralEventDataHook[
+	*GreetingKeys,      // implements psm.IKeyset
+	*GreetingState,     // implements psm.IState
+	GreetingStatus,     // implements psm.IStatusEnum
+	*GreetingStateData, // implements psm.IStateData
+	*GreetingEvent,     // implements psm.IEvent
+	GreetingPSMEvent,   // implements psm.IInnerEvent
+] {
+	return psm.GeneralEventDataHook[
 		*GreetingKeys,      // implements psm.IKeyset
 		*GreetingState,     // implements psm.IState
 		GreetingStatus,     // implements psm.IStatusEnum
