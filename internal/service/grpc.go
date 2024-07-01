@@ -6,7 +6,7 @@ import (
 	"github.com/pentops/go-grpc-helpers/protovalidatemw"
 	"github.com/pentops/log.go/grpc_log"
 	"github.com/pentops/log.go/log"
-	"github.com/pentops/o5-go/auth/v1/auth_pb"
+	"github.com/pentops/o5-auth/gen/o5/auth/v1/auth_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 	"github.com/pentops/o5-test-app/internal/state"

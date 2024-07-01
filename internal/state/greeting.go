@@ -7,7 +7,6 @@ import (
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 	"github.com/pentops/protostate/psm"
-	"github.com/pentops/sqrlx.go/sqrlx"
 )
 
 type batonSender struct {
@@ -19,10 +18,10 @@ func (bs *batonSender) Collect(tb test_pb.GreetingPSMHookBaton, msg o5msg.Messag
 }
 
 func NewGreetingPSM() (*test_pb.GreetingPSM, error) {
-	config := test_pb.DefaultGreetingPSMConfig().
-		SystemActor(psm.MustSystemActor("216B6C2E-D996-492C-B80C-9AAD0CCFEEC4"))
+	sm, err := test_pb.GreetingPSMBuilder().
+		SystemActor(psm.MustSystemActor("216B6C2E-D996-492C-B80C-9AAD0CCFEEC4")).
+		BuildStateMachine()
 
-	sm, err := test_pb.NewGreetingPSM(config)
 	if err != nil {
 		return nil, err
 	}
@@ -41,9 +40,8 @@ func NewGreetingPSM() (*test_pb.GreetingPSM, error) {
 			state.AppVersion = event.AppVersion
 			return nil
 		})).
-		Hook(test_pb.GreetingPSMHook(func(
+		LogicHook(test_pb.GreetingPSMLogicHook(func(
 			ctx context.Context,
-			tx sqrlx.Transaction,
 			tb test_pb.GreetingPSMHookBaton,
 			state *test_pb.GreetingState,
 			event *test_pb.GreetingEventType_Initiated,

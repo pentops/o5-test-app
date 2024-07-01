@@ -1,26 +1,26 @@
 module github.com/pentops/o5-test-app
 
-go 1.22.3
+go 1.22.4
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.1-20240508200655-46a4cf4ba109.1
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240508200655-46a4cf4ba109.2
 	github.com/elgris/sqrl v0.0.0-20210727210741-7e0198b30236
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
-	github.com/pentops/flowtest v0.0.0-20240607020132-7dda31076e79
+	github.com/pentops/flowtest v0.0.0-20240623020118-02bf89f30b87
 	github.com/pentops/go-grpc-helpers v0.0.0-20230815045451-2524ee695ebb
-	github.com/pentops/j5 v0.0.0-20240611220935-212e7c4e61f2
-	github.com/pentops/log.go v0.0.0-20240523172444-85c9292a83db
-	github.com/pentops/o5-go v0.0.0-20240611214452-99a6f6789ff8
-	github.com/pentops/o5-messaging v0.0.0-20240611214218-4ac153f68bc9
+	github.com/pentops/j5 v0.0.0-20240630233950-623dde7a966a
+	github.com/pentops/log.go v0.0.0-20240618224413-ed85018bafd9
+	github.com/pentops/o5-auth v0.0.0-20240614180342-3765ffa80762
+	github.com/pentops/o5-messaging v0.0.0-20240614163039-d8f7b29ba565
 	github.com/pentops/pgtest.go v0.0.0-20240604005819-2035f4562734
-	github.com/pentops/protostate v0.0.0-20240611232313-1fb3a679db51
-	github.com/pentops/runner v0.0.0-20240525192419-d655233635e9
-	github.com/pentops/sqrlx.go v0.0.0-20240523172712-b615a994d8c0
+	github.com/pentops/protostate v0.0.0-20240618224345-07873fade6ae
+	github.com/pentops/runner v0.0.0-20240701000007-f2e220b79f6b
+	github.com/pentops/sqrlx.go v0.0.0-20240618224315-b9b023d5f689
 	github.com/pressly/goose v2.7.0+incompatible
 	google.golang.org/genproto/googleapis/api v0.0.0-20240610135401-a8a62080eff3
 	google.golang.org/grpc v1.64.0
-	google.golang.org/protobuf v1.34.2-0.20240529085009-ca837e5c658b
+	google.golang.org/protobuf v1.34.2
 )
 
 require (
