@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pentops/flowtest"
+	"github.com/pentops/o5-auth/authtest"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
@@ -24,6 +25,8 @@ func TestService(t *testing.T) {
 	var requestMessage *test_tpb.GreetingMessage
 
 	flow.Step("Hello", func(ctx context.Context, t flowtest.Asserter) {
+		ctx = authtest.JWTContext(ctx)
+
 		greetingID = uuid.NewString()
 
 		res, err := uu.GreetingCommand.Hello(ctx, &test_spb.HelloRequest{
@@ -50,6 +53,7 @@ func TestService(t *testing.T) {
 	})
 
 	flow.Step("Check", func(ctx context.Context, t flowtest.Asserter) {
+		ctx = authtest.JWTContext(ctx)
 		greeting, err := uu.GreetingQuery.GetGreeting(ctx, &test_spb.GetGreetingRequest{
 			GreetingId: greetingID,
 		})
@@ -65,6 +69,7 @@ func TestThrowError(t *testing.T) {
 	defer flow.RunSteps(t)
 
 	flow.Step("Throw Unknown", func(ctx context.Context, t flowtest.Asserter) {
+		ctx = authtest.JWTContext(ctx)
 		_, err := uu.GreetingCommand.Hello(ctx, &test_spb.HelloRequest{
 			GreetingId: uuid.NewString(),
 			Name:       "World",
@@ -92,6 +97,7 @@ func TestThrowError(t *testing.T) {
 	})
 
 	flow.Step("Throw Known", func(ctx context.Context, t flowtest.Asserter) {
+		ctx = authtest.JWTContext(ctx)
 		_, err := uu.GreetingCommand.Hello(ctx, &test_spb.HelloRequest{
 			GreetingId: uuid.NewString(),
 			Name:       "World",
@@ -128,6 +134,7 @@ func TestMessageError(t *testing.T) {
 	var greetingID string
 	var requestMessage *test_tpb.GreetingMessage
 	flow.Step("Throw Passthrough", func(ctx context.Context, t flowtest.Asserter) {
+		ctx = authtest.JWTContext(ctx)
 		greetingID = uuid.NewString()
 		_, err := uu.GreetingCommand.Hello(ctx, &test_spb.HelloRequest{
 			GreetingId: greetingID,
