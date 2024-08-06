@@ -7,6 +7,7 @@ import (
 
 	sq "github.com/elgris/sqrl"
 	"github.com/google/uuid"
+	"github.com/pentops/o5-auth/o5auth"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/state"
@@ -38,6 +39,11 @@ func NewGreetingCommandService(conn sqrlx.Connection, version string, sm *state.
 
 func (ss *GreetingCommandService) Hello(ctx context.Context, req *test_spb.HelloRequest) (*test_spb.HelloResponse, error) {
 
+	action, err := o5auth.GetAuthenticatedAction(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	if req.ThrowError != nil {
 		if req.ThrowError.Code == 0 {
 			// while 0 means OK, if it is being set in an error that's not
@@ -47,18 +53,13 @@ func (ss *GreetingCommandService) Hello(ctx context.Context, req *test_spb.Hello
 		return nil, status.Error(codes.Code(req.ThrowError.Code), req.ThrowError.Message)
 	}
 
-	cause, err := CommandCause(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	evt := &test_pb.GreetingPSMEventSpec{
 		Keys: &test_pb.GreetingKeys{
 			GreetingId: req.GreetingId,
 		},
 		EventID:   uuid.NewString(),
 		Timestamp: time.Now(),
-		Cause:     cause,
+		Action:    action,
 		Event: &test_pb.GreetingEventType_Initiated{
 			Name:        req.Name,
 			AppVersion:  ss.appVersion,

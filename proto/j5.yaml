@@ -4,7 +4,27 @@ packages:
     name: test.v1
 
 options:
-  trimSubPackages:
-    - service
-    - topic
+  subPackages:
+    - name: service
+    - name: topic
 
+dependencies:
+  - registry:
+      owner: pentops
+      name: j5
+
+  - registry:
+      owner: pentops
+      name: protostate
+
+  - registry:
+      owner: pentops
+      name: messaging
+
+  - bufRegistry:
+      owner: bufbuild
+      name: protovalidate
+
+  - bufRegistry:
+      owner: googleapis
+      name: googleapis
