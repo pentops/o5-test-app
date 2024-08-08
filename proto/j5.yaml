@@ -15,10 +15,6 @@ dependencies:
 
   - registry:
       owner: pentops
-      name: protostate
-
-  - registry:
-      owner: pentops
       name: messaging
 
   - bufRegistry:
