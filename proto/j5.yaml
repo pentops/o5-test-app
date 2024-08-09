@@ -16,11 +16,3 @@ dependencies:
   - registry:
       owner: pentops
       name: messaging
-
-  - bufRegistry:
-      owner: bufbuild
-      name: protovalidate
-
-  - bufRegistry:
-      owner: googleapis
-      name: googleapis
