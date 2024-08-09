@@ -7,7 +7,7 @@ import (
 
 	sq "github.com/elgris/sqrl"
 	"github.com/google/uuid"
-	"github.com/pentops/j5/gen/psm/state/v1/psm_pb"
+	"github.com/pentops/j5/gen/j5/state/v1/psm_j5pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 	"github.com/pentops/o5-test-app/internal/state"
@@ -62,9 +62,9 @@ func (ww *TestWorker) Greeting(ctx context.Context, req *test_tpb.GreetingMessag
 		},
 		EventID:   replyID(req.GreetingId),
 		Timestamp: time.Now(),
-		Cause: &psm_pb.Cause{
-			Type: &psm_pb.Cause_ExternalEvent{
-				ExternalEvent: &psm_pb.ExternalEventCause{
+		Cause: &psm_j5pb.Cause{
+			Type: &psm_j5pb.Cause_ExternalEvent{
+				ExternalEvent: &psm_j5pb.ExternalEventCause{
 					SystemName: "test",
 					EventName:  "greeting",
 				},
