@@ -4,10 +4,10 @@ import (
 	"github.com/pentops/go-grpc-helpers/protovalidatemw"
 	"github.com/pentops/log.go/grpc_log"
 	"github.com/pentops/log.go/log"
-	"github.com/pentops/o5-auth/o5auth"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 	"github.com/pentops/o5-test-app/internal/state"
+	"github.com/pentops/realms/j5auth"
 	"github.com/pentops/sqrlx.go/sqrlx"
 	"google.golang.org/grpc"
 )
@@ -43,7 +43,7 @@ func RegisterGRPC(server *grpc.Server, conn sqrlx.Connection, appVersion string)
 func GRPCMiddleware(version string) []grpc.UnaryServerInterceptor {
 	return []grpc.UnaryServerInterceptor{
 		grpc_log.UnaryServerInterceptor(log.DefaultContext, log.DefaultTrace, log.DefaultLogger),
-		o5auth.GRPCMiddleware,
+		j5auth.GRPCMiddleware,
 		protovalidatemw.UnaryServerInterceptor(),
 	}
 }

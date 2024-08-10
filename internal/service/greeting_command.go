@@ -7,10 +7,10 @@ import (
 
 	sq "github.com/elgris/sqrl"
 	"github.com/google/uuid"
-	"github.com/pentops/o5-auth/o5auth"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/state"
+	"github.com/pentops/realms/j5auth"
 	"github.com/pentops/sqrlx.go/sqrlx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -39,7 +39,7 @@ func NewGreetingCommandService(conn sqrlx.Connection, version string, sm *state.
 
 func (ss *GreetingCommandService) Hello(ctx context.Context, req *test_spb.HelloRequest) (*test_spb.HelloResponse, error) {
 
-	action, err := o5auth.GetAuthenticatedAction(ctx)
+	action, err := j5auth.GetAuthenticatedAction(ctx)
 	if err != nil {
 		return nil, err
 	}
