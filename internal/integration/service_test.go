@@ -7,10 +7,10 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pentops/flowtest"
-	"github.com/pentops/o5-auth/authtest"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
+	"github.com/pentops/realms/authtest"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
