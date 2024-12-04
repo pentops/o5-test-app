@@ -18,6 +18,22 @@ generate:
       - base: go-psm
       - base: go-o5-messaging
 
+  - name: client
+    inputs:
+      - local: proto
+      - registry:
+          owner: pentops
+          name: dante
+    output: ./internal/genclient
+    plugins:
+      - base: go-client
+    opts:
+      go_package_prefix: github.com/pentops/o5-test-app/internal/genclient
+
+managedPaths:
+  - internal/gen
+  - internal/genclient
+
 plugins:
   - name: go
     type: PLUGIN_PROTO
@@ -43,3 +59,8 @@ plugins:
     base: go
     docker:
       image: ghcr.io/pentops/protoc-gen-go-o5-messaging:db56de35f3edb216b6e3a2b2559e4b4866fbdcaf
+
+  - name: go-client
+    type: PLUGIN_J5_CLIENT
+    docker:
+      image: ghcr.io/pentops/j5-gen-go-client:ce502ddb23f59b3371c3a3772c4bfec754c66d91

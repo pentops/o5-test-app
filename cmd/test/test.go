@@ -7,7 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pentops/o5-test-app/internal/test/runner"
+	"github.com/pentops/o5-test-app/internal/test"
+	"github.com/pentops/o5-test-app/internal/test/universe"
 )
 
 func main() {
@@ -22,15 +23,16 @@ func main() {
 		}
 	}
 
-	cfg := &runner.APIConfig{
-		APIRoot:     os.Getenv("O5_E2E_API_ADDR"),
-		MetaRoot:    os.Getenv("O5_E2E_O5_ADDR"),
-		BearerToken: os.Getenv("O5_TOKEN"),
+	domain := os.Getenv("O5_E2E_DOMAIN")
+	cfg := &universe.APIConfig{
+		APIRoot:     fmt.Sprintf("https://o5.%s", domain),
+		MetaRoot:    fmt.Sprintf("https://o5.%s", domain),
+		BearerToken: os.Getenv("O5_BEARER"),
 	}
 
 	ctx := context.Background()
 	tags := flag.Args()
-	if err := runner.Run(ctx, cfg, tags); err != nil {
+	if err := test.Run(ctx, cfg, tags); err != nil {
 		fmt.Printf("e2e.Run: %s\n", err)
 		os.Exit(1)
 	}

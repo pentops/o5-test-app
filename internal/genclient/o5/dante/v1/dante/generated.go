@@ -6,12 +6,12 @@ package dante
 import (
 	context "context"
 	json "encoding/json"
-	fmt "fmt"
-	url "net/url"
-
+	errors "errors"
+	list "github.com/pentops/o5-test-app/internal/genclient/j5/list/v1/list"
+	state "github.com/pentops/o5-test-app/internal/genclient/j5/state/v1/state"
 	messaging "github.com/pentops/o5-test-app/internal/genclient/o5/messaging/v1/messaging"
-	list "github.com/pentops/o5-test-app/internal/genclient/psm/list/v1/list"
-	state "github.com/pentops/o5-test-app/internal/genclient/psm/state/v1/state"
+	url "net/url"
+	strings "strings"
 )
 
 type Requester interface {
@@ -30,9 +30,18 @@ func NewDeadMessageCommandService(requester Requester) *DeadMessageCommandServic
 }
 
 func (s DeadMessageCommandService) UpdateDeadMessage(ctx context.Context, req *UpdateDeadMessageRequest) (*UpdateDeadMessageResponse, error) {
-	path := fmt.Sprintf("/dante/v1/c/messages/%s/update",
-		req.MessageId,
-	)
+	pathParts := make([]string, 7)
+	pathParts[0] = ""
+	pathParts[1] = "dante"
+	pathParts[2] = "v1"
+	pathParts[3] = "c"
+	pathParts[4] = "messages"
+	if req.MessageId == "" {
+		return nil, errors.New("required field \"MessageId\" not set")
+	}
+	pathParts[5] = req.MessageId
+	pathParts[6] = "update"
+	path := strings.Join(pathParts, "/")
 	resp := &UpdateDeadMessageResponse{}
 	err := s.Request(ctx, "POST", path, req, resp)
 	if err != nil {
@@ -42,9 +51,18 @@ func (s DeadMessageCommandService) UpdateDeadMessage(ctx context.Context, req *U
 }
 
 func (s DeadMessageCommandService) ReplayDeadMessage(ctx context.Context, req *ReplayDeadMessageRequest) (*ReplayDeadMessageResponse, error) {
-	path := fmt.Sprintf("/dante/v1/c/messages/%s/replay",
-		req.MessageId,
-	)
+	pathParts := make([]string, 7)
+	pathParts[0] = ""
+	pathParts[1] = "dante"
+	pathParts[2] = "v1"
+	pathParts[3] = "c"
+	pathParts[4] = "messages"
+	if req.MessageId == "" {
+		return nil, errors.New("required field \"MessageId\" not set")
+	}
+	pathParts[5] = req.MessageId
+	pathParts[6] = "replay"
+	path := strings.Join(pathParts, "/")
 	resp := &ReplayDeadMessageResponse{}
 	err := s.Request(ctx, "POST", path, req, resp)
 	if err != nil {
@@ -54,15 +72,58 @@ func (s DeadMessageCommandService) ReplayDeadMessage(ctx context.Context, req *R
 }
 
 func (s DeadMessageCommandService) RejectDeadMessage(ctx context.Context, req *RejectDeadMessageRequest) (*RejectDeadMessageResponse, error) {
-	path := fmt.Sprintf("/dante/v1/c/messages/%s/shelve",
-		req.MessageId,
-	)
+	pathParts := make([]string, 7)
+	pathParts[0] = ""
+	pathParts[1] = "dante"
+	pathParts[2] = "v1"
+	pathParts[3] = "c"
+	pathParts[4] = "messages"
+	if req.MessageId == "" {
+		return nil, errors.New("required field \"MessageId\" not set")
+	}
+	pathParts[5] = req.MessageId
+	pathParts[6] = "shelve"
+	path := strings.Join(pathParts, "/")
 	resp := &RejectDeadMessageResponse{}
 	err := s.Request(ctx, "POST", path, req, resp)
 	if err != nil {
 		return nil, err
 	}
 	return resp, nil
+}
+
+// UpdateDeadMessageRequest
+type UpdateDeadMessageRequest struct {
+	ReplacesVersionId string              `json:"replacesVersionId,omitempty"`
+	VersionId         *string             `json:"versionId,omitempty"`
+	Message           *DeadMessageVersion `json:"message"`
+	MessageId         string              `json:"-" path:"messageId"`
+}
+
+// UpdateDeadMessageResponse
+type UpdateDeadMessageResponse struct {
+	Message *DeadMessageState `json:"message"`
+}
+
+// ReplayDeadMessageRequest
+type ReplayDeadMessageRequest struct {
+	MessageId string `json:"-" path:"messageId"`
+}
+
+// ReplayDeadMessageResponse
+type ReplayDeadMessageResponse struct {
+	Message *DeadMessageState `json:"message"`
+}
+
+// RejectDeadMessageRequest
+type RejectDeadMessageRequest struct {
+	Reason    string `json:"reason,omitempty"`
+	MessageId string `json:"-" path:"messageId"`
+}
+
+// RejectDeadMessageResponse
+type RejectDeadMessageResponse struct {
+	Message *DeadMessageState `json:"message"`
 }
 
 // DeadMessageQueryService
@@ -77,9 +138,22 @@ func NewDeadMessageQueryService(requester Requester) *DeadMessageQueryService {
 }
 
 func (s DeadMessageQueryService) GetDeadMessage(ctx context.Context, req *GetDeadMessageRequest) (*GetDeadMessageResponse, error) {
-	path := fmt.Sprintf("/dante/v1/q/message/%s",
-		req.MessageId,
-	)
+	pathParts := make([]string, 6)
+	pathParts[0] = ""
+	pathParts[1] = "dante"
+	pathParts[2] = "v1"
+	pathParts[3] = "q"
+	pathParts[4] = "message"
+	if req.MessageId == nil || *req.MessageId == "" {
+		return nil, errors.New("required field \"MessageId\" not set")
+	}
+	pathParts[5] = *req.MessageId
+	path := strings.Join(pathParts, "/")
+	if query, err := req.QueryParameters(); err != nil {
+		return nil, err
+	} else if len(query) > 0 {
+		path += "?" + query.Encode()
+	}
 	resp := &GetDeadMessageResponse{}
 	err := s.Request(ctx, "GET", path, req, resp)
 	if err != nil {
@@ -89,7 +163,18 @@ func (s DeadMessageQueryService) GetDeadMessage(ctx context.Context, req *GetDea
 }
 
 func (s DeadMessageQueryService) ListDeadMessages(ctx context.Context, req *ListDeadMessagesRequest) (*ListDeadMessagesResponse, error) {
-	path := fmt.Sprintf("/dante/v1/q/messages")
+	pathParts := make([]string, 5)
+	pathParts[0] = ""
+	pathParts[1] = "dante"
+	pathParts[2] = "v1"
+	pathParts[3] = "q"
+	pathParts[4] = "messages"
+	path := strings.Join(pathParts, "/")
+	if query, err := req.QueryParameters(); err != nil {
+		return nil, err
+	} else if len(query) > 0 {
+		path += "?" + query.Encode()
+	}
 	resp := &ListDeadMessagesResponse{}
 	err := s.Request(ctx, "GET", path, req, resp)
 	if err != nil {
@@ -99,9 +184,23 @@ func (s DeadMessageQueryService) ListDeadMessages(ctx context.Context, req *List
 }
 
 func (s DeadMessageQueryService) ListDeadMessageEvents(ctx context.Context, req *ListDeadMessageEventsRequest) (*ListDeadMessageEventsResponse, error) {
-	path := fmt.Sprintf("/dante/v1/q/message/%s/events",
-		req.MessageId,
-	)
+	pathParts := make([]string, 7)
+	pathParts[0] = ""
+	pathParts[1] = "dante"
+	pathParts[2] = "v1"
+	pathParts[3] = "q"
+	pathParts[4] = "message"
+	if req.MessageId == "" {
+		return nil, errors.New("required field \"MessageId\" not set")
+	}
+	pathParts[5] = req.MessageId
+	pathParts[6] = "events"
+	path := strings.Join(pathParts, "/")
+	if query, err := req.QueryParameters(); err != nil {
+		return nil, err
+	} else if len(query) > 0 {
+		path += "?" + query.Encode()
+	}
 	resp := &ListDeadMessageEventsResponse{}
 	err := s.Request(ctx, "GET", path, req, resp)
 	if err != nil {
@@ -110,35 +209,14 @@ func (s DeadMessageQueryService) ListDeadMessageEvents(ctx context.Context, req 
 	return resp, nil
 }
 
-// DeadMessageKeys Proto: o5.dante.v1.DeadMessageKeys
-type DeadMessageKeys struct {
-	MessageId string `json:"messageId,omitempty"`
+// GetDeadMessageRequest
+type GetDeadMessageRequest struct {
+	MessageId *string `json:"-" path:"messageId"`
 }
 
-// DeadMessageData Proto: o5.dante.v1.DeadMessageData
-type DeadMessageData struct {
-	Notification   *messaging.DeadMessage `json:"notification,omitempty"`
-	CurrentVersion *DeadMessageVersion    `json:"currentVersion,omitempty"`
-}
-
-// DeadMessageEvent Proto: o5.dante.v1.DeadMessageEvent
-type DeadMessageEvent struct {
-	Metadata *state.EventMetadata  `json:"metadata"`
-	Keys     *DeadMessageKeys      `json:"keys"`
-	Event    *DeadMessageEventType `json:"event"`
-}
-
-// DeadMessageState Proto: o5.dante.v1.DeadMessageState
-type DeadMessageState struct {
-	Metadata *state.StateMetadata `json:"metadata"`
-	Keys     *DeadMessageKeys     `json:"keys"`
-	Status   string               `json:"status,omitempty"`
-	Data     *DeadMessageData     `json:"data,omitempty"`
-}
-
-// RejectDeadMessageResponse
-type RejectDeadMessageResponse struct {
-	Message *DeadMessageState `json:"message"`
+func (s GetDeadMessageRequest) QueryParameters() (url.Values, error) {
+	values := url.Values{}
+	return values, nil
 }
 
 // GetDeadMessageResponse
@@ -147,188 +225,17 @@ type GetDeadMessageResponse struct {
 	Events  []*DeadMessageEvent `json:"events,omitempty"`
 }
 
-// DeadMessageEventType_Updated Proto: o5.dante.v1.DeadMessageEventType.Updated
-type DeadMessageEventType_Updated struct {
-	Spec *DeadMessageVersion `json:"spec,omitempty"`
+// ListDeadMessagesRequest
+type ListDeadMessagesRequest struct {
+	Page  *list.PageRequest  `json:"-" query:"page"`
+	Query *list.QueryRequest `json:"-" query:"query"`
 }
 
-// DeadMessageEventType_Rejected Proto: o5.dante.v1.DeadMessageEventType.Rejected
-type DeadMessageEventType_Rejected struct {
-	Reason string `json:"reason,omitempty"`
-}
-
-// ListDeadMessageEventsRequest
-type ListDeadMessageEventsRequest struct {
-	MessageId string             `json:"-" path:"messageId"`
-	Page      *list.PageRequest  `json:"-" query:"page"`
-	Query     *list.QueryRequest `json:"-" query:"query"`
-}
-
-func (s ListDeadMessageEventsRequest) QueryParameters() (url.Values, error) {
-	values := url.Values{}
-	if s.Page != nil {
-		bb, err := json.Marshal(s.Page)
-		if err != nil {
-			return nil, err
-		}
-		values.Set("page", string(bb))
-	}
-	if s.Query != nil {
-		bb, err := json.Marshal(s.Query)
-		if err != nil {
-			return nil, err
-		}
-		values.Set("query", string(bb))
-	}
-	return values, nil
-}
-
-func (s *ListDeadMessageEventsRequest) SetPageToken(pageToken string) {
+func (s *ListDeadMessagesRequest) SetPageToken(pageToken string) {
 	if s.Page == nil {
 		s.Page = &list.PageRequest{}
 	}
 	s.Page.Token = &pageToken
-}
-
-// DeadMessageEventType_Replayed Proto: o5.dante.v1.DeadMessageEventType.Replayed
-type DeadMessageEventType_Replayed struct {
-}
-
-// ListDeadMessageEventsResponse
-type ListDeadMessageEventsResponse struct {
-	Events []*DeadMessageEvent `json:"events,omitempty"`
-	Page   *list.PageResponse  `json:"page,omitempty"`
-}
-
-func (s ListDeadMessageEventsResponse) GetPageToken() *string {
-	if s.Page == nil {
-		return nil
-	}
-	return s.Page.NextToken
-}
-
-func (s ListDeadMessageEventsResponse) GetItems() []*DeadMessageEvent {
-	return s.Events
-}
-
-// UpdateDeadMessageRequest
-type UpdateDeadMessageRequest struct {
-	MessageId         string              `json:"-" path:"messageId"`
-	ReplacesVersionId string              `json:"replacesVersionId,omitempty"`
-	VersionId         *string             `json:"versionId,omitempty"`
-	Message           *DeadMessageVersion `json:"message"`
-}
-
-// DeadMessageVersion_SQSMessage Proto: o5.dante.v1.DeadMessageVersion.SQSMessage
-type DeadMessageVersion_SQSMessage struct {
-	QueueUrl   string            `json:"queueUrl,omitempty"`
-	Attributes map[string]string `json:"attributes,omitempty"`
-}
-
-// ReplayDeadMessageResponse
-type ReplayDeadMessageResponse struct {
-	Message *DeadMessageState `json:"message"`
-}
-
-// RejectDeadMessageRequest
-type RejectDeadMessageRequest struct {
-	MessageId string `path:"messageId" json:"-"`
-	Reason    string `json:"reason,omitempty"`
-}
-
-// GetDeadMessageRequest
-type GetDeadMessageRequest struct {
-	MessageId string `json:"-" path:"messageId"`
-}
-
-// DeadMessageEventType_Notified Proto: o5.dante.v1.DeadMessageEventType.Notified
-type DeadMessageEventType_Notified struct {
-	Notification *messaging.DeadMessage `json:"notification,omitempty"`
-}
-
-// ListDeadMessagesResponse
-type ListDeadMessagesResponse struct {
-	Messages []*DeadMessageState `json:"messages,omitempty"`
-	Page     *list.PageResponse  `json:"page,omitempty"`
-}
-
-func (s ListDeadMessagesResponse) GetPageToken() *string {
-	if s.Page == nil {
-		return nil
-	}
-	return s.Page.NextToken
-}
-
-func (s ListDeadMessagesResponse) GetItems() []*DeadMessageState {
-	return s.Messages
-}
-
-// DeadMessageVersion Proto: o5.dante.v1.DeadMessageVersion
-type DeadMessageVersion struct {
-	VersionId  string                         `json:"versionId,omitempty"`
-	Message    *messaging.Message             `json:"message,omitempty"`
-	SqsMessage *DeadMessageVersion_SQSMessage `json:"sqsMessage,omitempty"`
-}
-
-// UpdateDeadMessageResponse
-type UpdateDeadMessageResponse struct {
-	Message *DeadMessageState `json:"message"`
-}
-
-// ReplayDeadMessageRequest
-type ReplayDeadMessageRequest struct {
-	MessageId string `json:"-" path:"messageId"`
-}
-
-// DeadMessageEventType Proto: o5.dante.v1.DeadMessageEventType
-type DeadMessageEventType struct {
-	Type *DeadMessageEventType_type `json:"type,omitempty"`
-}
-
-// DeadMessageEventType_type Proto: o5.dante.v1.DeadMessageEventType.type
-type DeadMessageEventType_type struct {
-	Notified *DeadMessageEventType_Notified `json:"notified,omitempty"`
-	Updated  *DeadMessageEventType_Updated  `json:"updated,omitempty"`
-	Replayed *DeadMessageEventType_Replayed `json:"replayed,omitempty"`
-	Rejected *DeadMessageEventType_Rejected `json:"rejected,omitempty"`
-}
-
-func (s DeadMessageEventType_type) OneofKey() string {
-	if s.Notified != nil {
-		return "notified"
-	}
-	if s.Updated != nil {
-		return "updated"
-	}
-	if s.Replayed != nil {
-		return "replayed"
-	}
-	if s.Rejected != nil {
-		return "rejected"
-	}
-	return ""
-}
-
-func (s DeadMessageEventType_type) Type() interface{} {
-	if s.Notified != nil {
-		return s.Notified
-	}
-	if s.Updated != nil {
-		return s.Updated
-	}
-	if s.Replayed != nil {
-		return s.Replayed
-	}
-	if s.Rejected != nil {
-		return s.Rejected
-	}
-	return nil
-}
-
-// ListDeadMessagesRequest
-type ListDeadMessagesRequest struct {
-	Page  *list.PageRequest  `json:"-" query:"page"`
-	Query *list.QueryRequest `query:"query" json:"-"`
 }
 
 func (s ListDeadMessagesRequest) QueryParameters() (url.Values, error) {
@@ -350,9 +257,192 @@ func (s ListDeadMessagesRequest) QueryParameters() (url.Values, error) {
 	return values, nil
 }
 
-func (s *ListDeadMessagesRequest) SetPageToken(pageToken string) {
+// ListDeadMessagesResponse
+type ListDeadMessagesResponse struct {
+	Messages []*DeadMessageState `json:"messages,omitempty"`
+	Page     *list.PageResponse  `json:"page,omitempty"`
+}
+
+func (s ListDeadMessagesResponse) GetPageToken() *string {
+	if s.Page == nil {
+		return nil
+	}
+	return s.Page.NextToken
+}
+
+func (s ListDeadMessagesResponse) GetItems() []*DeadMessageState {
+	return s.Messages
+}
+
+// ListDeadMessageEventsRequest
+type ListDeadMessageEventsRequest struct {
+	MessageId string             `json:"-" path:"messageId"`
+	Page      *list.PageRequest  `json:"-" query:"page"`
+	Query     *list.QueryRequest `json:"-" query:"query"`
+}
+
+func (s *ListDeadMessageEventsRequest) SetPageToken(pageToken string) {
 	if s.Page == nil {
 		s.Page = &list.PageRequest{}
 	}
 	s.Page.Token = &pageToken
+}
+
+func (s ListDeadMessageEventsRequest) QueryParameters() (url.Values, error) {
+	values := url.Values{}
+	if s.Page != nil {
+		bb, err := json.Marshal(s.Page)
+		if err != nil {
+			return nil, err
+		}
+		values.Set("page", string(bb))
+	}
+	if s.Query != nil {
+		bb, err := json.Marshal(s.Query)
+		if err != nil {
+			return nil, err
+		}
+		values.Set("query", string(bb))
+	}
+	return values, nil
+}
+
+// ListDeadMessageEventsResponse
+type ListDeadMessageEventsResponse struct {
+	Events []*DeadMessageEvent `json:"events,omitempty"`
+	Page   *list.PageResponse  `json:"page,omitempty"`
+}
+
+func (s ListDeadMessageEventsResponse) GetPageToken() *string {
+	if s.Page == nil {
+		return nil
+	}
+	return s.Page.NextToken
+}
+
+func (s ListDeadMessageEventsResponse) GetItems() []*DeadMessageEvent {
+	return s.Events
+}
+
+// DeadMessageData Proto: DeadMessageData
+type DeadMessageData struct {
+	Notification   *messaging.DeadMessage `json:"notification,omitempty"`
+	CurrentVersion *DeadMessageVersion    `json:"currentVersion,omitempty"`
+}
+
+// DeadMessageVersion_SQSMessage Proto: DeadMessageVersion_SQSMessage
+type DeadMessageVersion_SQSMessage struct {
+	QueueUrl   string            `json:"queueUrl,omitempty"`
+	Attributes map[string]string `json:"attributes,omitempty"`
+}
+
+// DeadMessageEvent Proto: DeadMessageEvent
+type DeadMessageEvent struct {
+	Metadata  *state.EventMetadata  `json:"metadata"`
+	MessageId string                `json:"messageId,omitempty"`
+	Event     *DeadMessageEventType `json:"event"`
+}
+
+// DeadMessageEventType_Replayed Proto: DeadMessageEventType_Replayed
+type DeadMessageEventType_Replayed struct {
+}
+
+// DeadMessageVersion Proto: DeadMessageVersion
+type DeadMessageVersion struct {
+	VersionId  string                         `json:"versionId,omitempty"`
+	Message    *messaging.Message             `json:"message,omitempty"`
+	SqsMessage *DeadMessageVersion_SQSMessage `json:"sqsMessage,omitempty"`
+}
+
+// DeadMessageState Proto: DeadMessageState
+type DeadMessageState struct {
+	Metadata  *state.StateMetadata `json:"metadata"`
+	MessageId string               `json:"messageId,omitempty"`
+	Status    string               `json:"status,omitempty"`
+	Data      *DeadMessageData     `json:"data,omitempty"`
+}
+
+// DeadMessageEventType_Rejected Proto: DeadMessageEventType_Rejected
+type DeadMessageEventType_Rejected struct {
+	Reason string `json:"reason,omitempty"`
+}
+
+// DeadMessageEventType Proto Oneof: o5.dante.v1.DeadMessageEventType
+type DeadMessageEventType struct {
+	J5TypeKey string                         `json:"!type,omitempty"`
+	Notified  *DeadMessageEventType_Notified `json:"notified,omitempty"`
+	Updated   *DeadMessageEventType_Updated  `json:"updated,omitempty"`
+	Replayed  *DeadMessageEventType_Replayed `json:"replayed,omitempty"`
+	Rejected  *DeadMessageEventType_Rejected `json:"rejected,omitempty"`
+}
+
+func (s DeadMessageEventType) OneofKey() string {
+	if s.Notified != nil {
+		return "notified"
+	}
+	if s.Updated != nil {
+		return "updated"
+	}
+	if s.Replayed != nil {
+		return "replayed"
+	}
+	if s.Rejected != nil {
+		return "rejected"
+	}
+	return ""
+}
+
+func (s DeadMessageEventType) Type() interface{} {
+	if s.Notified != nil {
+		return s.Notified
+	}
+	if s.Updated != nil {
+		return s.Updated
+	}
+	if s.Replayed != nil {
+		return s.Replayed
+	}
+	if s.Rejected != nil {
+		return s.Rejected
+	}
+	return nil
+}
+
+// DeadMessageKeys Proto: DeadMessageKeys
+type DeadMessageKeys struct {
+	MessageId string `json:"messageId,omitempty"`
+}
+
+// DeadMessageEventType_Updated Proto: DeadMessageEventType_Updated
+type DeadMessageEventType_Updated struct {
+	Spec *DeadMessageVersion `json:"spec,omitempty"`
+}
+
+// DeadMessageEventType_Notified Proto: DeadMessageEventType_Notified
+type DeadMessageEventType_Notified struct {
+	Notification *messaging.DeadMessage `json:"notification,omitempty"`
+}
+
+// MessageStatus Proto Enum: o5.dante.v1.MessageStatus
+type MessageStatus string
+
+const (
+	MessageStatus_UNSPECIFIED MessageStatus = "UNSPECIFIED"
+	MessageStatus_CREATED     MessageStatus = "CREATED"
+	MessageStatus_UPDATED     MessageStatus = "UPDATED"
+	MessageStatus_REPLAYED    MessageStatus = "REPLAYED"
+	MessageStatus_REJECTED    MessageStatus = "REJECTED"
+)
+
+// CombinedClient
+type CombinedClient struct {
+	*DeadMessageQueryService
+	*DeadMessageCommandService
+}
+
+func NewCombinedClient(requester Requester) *CombinedClient {
+	return &CombinedClient{
+		DeadMessageQueryService:   NewDeadMessageQueryService(requester),
+		DeadMessageCommandService: NewDeadMessageCommandService(requester),
+	}
 }
