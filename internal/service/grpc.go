@@ -13,7 +13,6 @@ import (
 )
 
 func RegisterGRPC(server *grpc.Server, conn sqrlx.Connection, appVersion string) error {
-
 	states, err := state.NewStateMachines()
 	if err != nil {
 		return err
@@ -23,6 +22,7 @@ func RegisterGRPC(server *grpc.Server, conn sqrlx.Connection, appVersion string)
 	if err != nil {
 		return err
 	}
+
 	test_spb.RegisterGreetingCommandServiceServer(server, commandService)
 
 	testQueryService, err := NewGreetingQueryService(conn, states)
