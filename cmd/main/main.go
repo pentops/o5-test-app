@@ -7,7 +7,6 @@ import (
 	"net"
 	"time"
 
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/pentops/log.go/log"
 	"github.com/pentops/o5-test-app/internal/service"
 	"github.com/pentops/runner/commander"
@@ -84,9 +83,9 @@ func runServe(ctx context.Context, config struct {
 		return err
 	}
 
-	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(
 		service.GRPCMiddleware(version)...,
-	)))
+	))
 
 	if err := service.RegisterGRPC(grpcServer, db, version); err != nil {
 		return err

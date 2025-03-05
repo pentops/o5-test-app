@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/pentops/go-grpc-helpers/protovalidatemw"
+	"github.com/pentops/grpc.go/protovalidatemw"
 	"github.com/pentops/log.go/grpc_log"
 	"github.com/pentops/log.go/log"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
@@ -13,7 +13,6 @@ import (
 )
 
 func RegisterGRPC(server *grpc.Server, conn sqrlx.Connection, appVersion string) error {
-
 	states, err := state.NewStateMachines()
 	if err != nil {
 		return err
@@ -23,6 +22,7 @@ func RegisterGRPC(server *grpc.Server, conn sqrlx.Connection, appVersion string)
 	if err != nil {
 		return err
 	}
+
 	test_spb.RegisterGreetingCommandServiceServer(server, commandService)
 
 	testQueryService, err := NewGreetingQueryService(conn, states)
