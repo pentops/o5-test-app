@@ -8,7 +8,7 @@ require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.5-20250307204501-0409229c3780.1
 	github.com/google/uuid v1.6.0
 	github.com/pentops/flowtest v0.0.0-20241110231021-42663ac00b63
-	github.com/pentops/grpc.go v0.0.0-20250304234535-387f5d75a9c3
+	github.com/pentops/grpc.go v0.0.0-20250326042738-bcdfc2b43fa9
 	github.com/pentops/j5 v0.0.0-20250326000307-24e2adf77e8e
 	github.com/pentops/log.go v0.0.15
 	github.com/pentops/o5-messaging v0.0.0-20250317182016-de51c0e702a3

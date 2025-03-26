@@ -34,7 +34,7 @@ func runMigrate(ctx context.Context, config struct {
 }
 
 func runServe(ctx context.Context, cfg struct {
-	GRPCBind string `env:"GRPC_BIND" default:":8080"`
+	grpcbind.EnvConfig
 	pgenv.DatabaseConfig
 }) error {
 
