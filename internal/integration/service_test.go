@@ -54,7 +54,7 @@ func TestService(t *testing.T) {
 
 	flow.Step("Check", func(ctx context.Context, t flowtest.Asserter) {
 		ctx = authtest.JWTContext(ctx)
-		greeting, err := uu.GreetingQuery.GetGreeting(ctx, &test_spb.GetGreetingRequest{
+		greeting, err := uu.GreetingQuery.GreetingGet(ctx, &test_spb.GreetingGetRequest{
 			GreetingId: greetingID,
 		})
 		t.NoError(err)

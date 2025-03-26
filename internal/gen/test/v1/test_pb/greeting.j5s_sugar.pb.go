@@ -5,6 +5,7 @@ package test_pb
 import (
 	driver "database/sql/driver"
 	fmt "fmt"
+	proto "google.golang.org/protobuf/proto"
 )
 
 // GreetingEventType is a oneof wrapper
@@ -28,6 +29,7 @@ func (x *GreetingEventType) TypeKey() (GreetingEventTypeKey, bool) {
 
 type IsGreetingEventTypeWrappedType interface {
 	TypeKey() GreetingEventTypeKey
+	proto.Message
 }
 
 func (x *GreetingEventType) Set(val IsGreetingEventTypeWrappedType) {

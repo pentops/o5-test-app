@@ -5,9 +5,20 @@ package list
 
 import ()
 
-// And Proto: And
-type And struct {
+// PageRequest Proto: PageRequest
+type PageRequest struct {
+	Token    *string `json:"token,omitempty"`
+	PageSize *int64  `json:"pageSize,omitempty,string"`
+}
+
+// Or Proto: Or
+type Or struct {
 	Filters []*Filter `json:"filters,omitempty"`
+}
+
+// PageResponse Proto: PageResponse
+type PageResponse struct {
+	NextToken *string `json:"nextToken,omitempty"`
 }
 
 // Filter Proto Oneof: j5.list.v1.Filter
@@ -44,27 +55,10 @@ func (s Filter) Type() interface{} {
 	return nil
 }
 
-// PageResponse Proto: PageResponse
-type PageResponse struct {
-	NextToken *string `json:"nextToken,omitempty"`
-}
-
-// Range Proto: Range
-type Range struct {
-	Min string `json:"min,omitempty"`
-	Max string `json:"max,omitempty"`
-}
-
 // Field Proto: Field
 type Field struct {
 	Name string     `json:"name,omitempty"`
 	Type *FieldType `json:"type"`
-}
-
-// PageRequest Proto: PageRequest
-type PageRequest struct {
-	Token    *string `json:"token,omitempty"`
-	PageSize *int64  `json:"pageSize,omitempty"`
 }
 
 // QueryRequest Proto: QueryRequest
@@ -80,19 +74,25 @@ type Search struct {
 	Value string `json:"value,omitempty"`
 }
 
-// Or Proto: Or
-type Or struct {
-	Filters []*Filter `json:"filters,omitempty"`
-}
-
 // Sort Proto: Sort
 type Sort struct {
 	Field      string `json:"field,omitempty"`
 	Descending bool   `json:"descending,omitempty"`
 }
 
+// Range Proto: Range
+type Range struct {
+	Min string `json:"min,omitempty"`
+	Max string `json:"max,omitempty"`
+}
+
 // FieldType Proto: FieldType
 type FieldType struct {
 	Value string `json:"value,omitempty"`
 	Range *Range `json:"range,omitempty"`
+}
+
+// And Proto: And
+type And struct {
+	Filters []*Filter `json:"filters,omitempty"`
 }

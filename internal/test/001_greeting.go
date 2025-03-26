@@ -32,7 +32,7 @@ func GreetingTests(flow flowtest.StepSetter, uu *universe.Universe) {
 		queryClient := test.NewGreetingQueryService(uu.Client)
 
 		for {
-			reply, err := queryClient.GetGreeting(ctx, &test.GetGreetingRequest{
+			reply, err := queryClient.GreetingGet(ctx, &test.GreetingGetRequest{
 				GreetingId: greetingID,
 			})
 			t.NoError(err)

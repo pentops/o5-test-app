@@ -5,36 +5,38 @@ import (
 	"fmt"
 	"time"
 
-	sq "github.com/elgris/sqrl"
 	"github.com/google/uuid"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_spb"
 	"github.com/pentops/o5-test-app/internal/state"
 	"github.com/pentops/realms/j5auth"
 	"github.com/pentops/sqrlx.go/sqrlx"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type GreetingCommandService struct {
-	db         *sqrlx.Wrapper
+	db         sqrlx.Transactor
 	appVersion string
 
 	stateMachines *state.StateMachines
-	*test_spb.UnimplementedGreetingCommandServiceServer
+	test_spb.UnsafeGreetingCommandServiceServer
 }
 
-func NewGreetingCommandService(conn sqrlx.Connection, version string, sm *state.StateMachines) (*GreetingCommandService, error) {
-	db, err := sqrlx.New(conn, sq.Dollar)
-	if err != nil {
-		return nil, err
-	}
+var _ test_spb.GreetingCommandServiceServer = &GreetingCommandService{}
+
+func NewGreetingCommandService(db sqrlx.Transactor, version string, sm *state.StateMachines) (*GreetingCommandService, error) {
 
 	return &GreetingCommandService{
 		db:            db,
 		appVersion:    version,
 		stateMachines: sm,
 	}, nil
+}
+
+func (ss *GreetingCommandService) RegisterGRPC(server grpc.ServiceRegistrar) {
+	test_spb.RegisterGreetingCommandServiceServer(server, ss)
 }
 
 func (ss *GreetingCommandService) Hello(ctx context.Context, req *test_spb.HelloRequest) (*test_spb.HelloResponse, error) {

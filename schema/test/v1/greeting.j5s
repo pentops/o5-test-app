@@ -1,0 +1,69 @@
+package test.v1
+
+entity Greeting {
+
+	key greeting_id key:uuid {
+		primary = true
+	}
+	
+	status INITIATED
+	status REPLIED
+
+	data name string
+	data replyMessage ? string
+	data appVersion string
+
+	event Initiated {
+		field name string
+		field appVersion string
+		field testError object:TestError
+		field workerError object:TestError
+	}
+
+	event Replied {
+		field replyMessage string
+	}
+
+	command {
+
+		basePath = "/test/v1"
+
+		method Hello {
+			httpMethod = "POST"
+			httpPath = "/echo" // want /test/v1/echo
+			request {
+				field greetingId key:uuid {
+					| Required greeting id.
+					required = true
+				}
+
+				field name string {
+					| Required name of the person to greet.
+					required = true
+				}
+
+				field throwError object:TestError {
+					| When not nil, the handler will throw an unhandlered error
+					| prior to processing the request.
+					required = false
+				}
+
+				field workerError object:TestError {
+					| Passed to the request message, the call to this command
+					| should succeed, but handling the resulting side-effect should
+					| result in a dead letter
+				}
+			}
+
+			response {
+				field greeting ! object:GreetingState
+			}
+		}
+	}
+}
+
+object TestError {
+	field message string
+	field code integer:UINT32
+}
+

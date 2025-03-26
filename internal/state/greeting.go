@@ -33,7 +33,7 @@ func NewGreetingPSM() (*test_pb.GreetingPSM, error) {
 		OnEvent(test_pb.GreetingPSMEventInitiated).
 		SetStatus(test_pb.GreetingStatus_INITIATED).
 		Mutate(test_pb.GreetingPSMMutation(func(
-			state *test_pb.GreetingStateData,
+			state *test_pb.GreetingData,
 			event *test_pb.GreetingEventType_Initiated,
 		) error {
 			state.Name = event.Name
@@ -61,7 +61,7 @@ func NewGreetingPSM() (*test_pb.GreetingPSM, error) {
 		OnEvent(test_pb.GreetingPSMEventReplied).
 		SetStatus(test_pb.GreetingStatus_REPLIED).
 		Mutate(test_pb.GreetingPSMMutation(func(
-			state *test_pb.GreetingStateData,
+			state *test_pb.GreetingData,
 			event *test_pb.GreetingEventType_Replied,
 		) error {
 			state.ReplyMessage = &event.ReplyMessage

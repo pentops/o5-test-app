@@ -324,16 +324,14 @@ func (s ListDeadMessageEventsResponse) GetItems() []*DeadMessageEvent {
 	return s.Events
 }
 
-// DeadMessageData Proto: DeadMessageData
-type DeadMessageData struct {
-	Notification   *messaging.DeadMessage `json:"notification,omitempty"`
-	CurrentVersion *DeadMessageVersion    `json:"currentVersion,omitempty"`
-}
-
 // DeadMessageVersion_SQSMessage Proto: DeadMessageVersion_SQSMessage
 type DeadMessageVersion_SQSMessage struct {
 	QueueUrl   string            `json:"queueUrl,omitempty"`
 	Attributes map[string]string `json:"attributes,omitempty"`
+}
+
+// DeadMessageEventType_Replayed Proto: DeadMessageEventType_Replayed
+type DeadMessageEventType_Replayed struct {
 }
 
 // DeadMessageEvent Proto: DeadMessageEvent
@@ -343,8 +341,23 @@ type DeadMessageEvent struct {
 	Event     *DeadMessageEventType `json:"event"`
 }
 
-// DeadMessageEventType_Replayed Proto: DeadMessageEventType_Replayed
-type DeadMessageEventType_Replayed struct {
+// DeadMessageState Proto: DeadMessageState
+type DeadMessageState struct {
+	Metadata  *state.StateMetadata `json:"metadata"`
+	MessageId string               `json:"messageId,omitempty"`
+	Status    MessageStatus        `json:"status,omitempty"`
+	Data      *DeadMessageData     `json:"data,omitempty"`
+}
+
+// DeadMessageKeys Proto: DeadMessageKeys
+type DeadMessageKeys struct {
+	MessageId string `json:"messageId,omitempty"`
+}
+
+// DeadMessageData Proto: DeadMessageData
+type DeadMessageData struct {
+	Notification   *messaging.DeadMessage `json:"notification,omitempty"`
+	CurrentVersion *DeadMessageVersion    `json:"currentVersion,omitempty"`
 }
 
 // DeadMessageVersion Proto: DeadMessageVersion
@@ -354,18 +367,31 @@ type DeadMessageVersion struct {
 	SqsMessage *DeadMessageVersion_SQSMessage `json:"sqsMessage,omitempty"`
 }
 
-// DeadMessageState Proto: DeadMessageState
-type DeadMessageState struct {
-	Metadata  *state.StateMetadata `json:"metadata"`
-	MessageId string               `json:"messageId,omitempty"`
-	Status    string               `json:"status,omitempty"`
-	Data      *DeadMessageData     `json:"data,omitempty"`
-}
-
 // DeadMessageEventType_Rejected Proto: DeadMessageEventType_Rejected
 type DeadMessageEventType_Rejected struct {
 	Reason string `json:"reason,omitempty"`
 }
+
+// DeadMessageEventType_Updated Proto: DeadMessageEventType_Updated
+type DeadMessageEventType_Updated struct {
+	Spec *DeadMessageVersion `json:"spec,omitempty"`
+}
+
+// DeadMessageEventType_Notified Proto: DeadMessageEventType_Notified
+type DeadMessageEventType_Notified struct {
+	Notification *messaging.DeadMessage `json:"notification,omitempty"`
+}
+
+// MessageStatus Proto Enum: o5.dante.v1.MessageStatus
+type MessageStatus string
+
+const (
+	MessageStatus_UNSPECIFIED MessageStatus = "UNSPECIFIED"
+	MessageStatus_CREATED     MessageStatus = "CREATED"
+	MessageStatus_UPDATED     MessageStatus = "UPDATED"
+	MessageStatus_REPLAYED    MessageStatus = "REPLAYED"
+	MessageStatus_REJECTED    MessageStatus = "REJECTED"
+)
 
 // DeadMessageEventType Proto Oneof: o5.dante.v1.DeadMessageEventType
 type DeadMessageEventType struct {
@@ -408,41 +434,15 @@ func (s DeadMessageEventType) Type() interface{} {
 	return nil
 }
 
-// DeadMessageKeys Proto: DeadMessageKeys
-type DeadMessageKeys struct {
-	MessageId string `json:"messageId,omitempty"`
-}
-
-// DeadMessageEventType_Updated Proto: DeadMessageEventType_Updated
-type DeadMessageEventType_Updated struct {
-	Spec *DeadMessageVersion `json:"spec,omitempty"`
-}
-
-// DeadMessageEventType_Notified Proto: DeadMessageEventType_Notified
-type DeadMessageEventType_Notified struct {
-	Notification *messaging.DeadMessage `json:"notification,omitempty"`
-}
-
-// MessageStatus Proto Enum: o5.dante.v1.MessageStatus
-type MessageStatus string
-
-const (
-	MessageStatus_UNSPECIFIED MessageStatus = "UNSPECIFIED"
-	MessageStatus_CREATED     MessageStatus = "CREATED"
-	MessageStatus_UPDATED     MessageStatus = "UPDATED"
-	MessageStatus_REPLAYED    MessageStatus = "REPLAYED"
-	MessageStatus_REJECTED    MessageStatus = "REJECTED"
-)
-
 // CombinedClient
 type CombinedClient struct {
-	*DeadMessageQueryService
 	*DeadMessageCommandService
+	*DeadMessageQueryService
 }
 
 func NewCombinedClient(requester Requester) *CombinedClient {
 	return &CombinedClient{
-		DeadMessageQueryService:   NewDeadMessageQueryService(requester),
 		DeadMessageCommandService: NewDeadMessageCommandService(requester),
+		DeadMessageQueryService:   NewDeadMessageQueryService(requester),
 	}
 }
