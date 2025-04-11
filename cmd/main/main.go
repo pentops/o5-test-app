@@ -55,5 +55,5 @@ func runServe(ctx context.Context, cfg struct {
 	app.RegisterGRPC(grpcServer)
 	reflection.Register(grpcServer)
 
-	return grpcbind.ListenAndServe(ctx, grpcServer, cfg.GRPCBind)
+	return cfg.ListenAndServe(ctx, grpcServer)
 }
