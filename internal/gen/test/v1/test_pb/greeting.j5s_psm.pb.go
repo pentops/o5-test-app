@@ -392,3 +392,16 @@ func GreetingPSMUpsertPublishHook(cb func(context.Context, psm.Publisher, *Greet
 		*GreetingData,  // implements psm.IStateData
 	](cb)
 }
+
+func (event *GreetingEvent) EventPublishMetadata() *psm_j5pb.EventPublishMetadata {
+	tenantKeys := make([]*psm_j5pb.EventTenant, 0)
+	return &psm_j5pb.EventPublishMetadata{
+		EventId:   event.Metadata.EventId,
+		Sequence:  event.Metadata.Sequence,
+		Timestamp: event.Metadata.Timestamp,
+		Cause:     event.Metadata.Cause,
+		Auth: &psm_j5pb.PublishAuth{
+			TenantKeys: tenantKeys,
+		},
+	}
+}

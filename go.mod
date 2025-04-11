@@ -5,22 +5,22 @@ go 1.24.0
 toolchain go1.24.1
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.5-20250307204501-0409229c3780.1
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250307204501-0409229c3780.1
 	github.com/google/uuid v1.6.0
-	github.com/pentops/flowtest v0.0.0-20241110231021-42663ac00b63
+	github.com/pentops/flowtest v0.0.0-20250403234635-311159fa1e81
 	github.com/pentops/grpc.go v0.0.0-20250326042738-bcdfc2b43fa9
-	github.com/pentops/j5 v0.0.0-20250326000307-24e2adf77e8e
+	github.com/pentops/j5 v0.0.0-20250407052915-b2fc017d8ac2
 	github.com/pentops/log.go v0.0.15
-	github.com/pentops/o5-messaging v0.0.0-20250317182016-de51c0e702a3
+	github.com/pentops/o5-messaging v0.0.0-20250408063726-cf9d6419c7cd
 	github.com/pentops/pgtest.go v0.0.0-20241223222214-7638cc50e15b
-	github.com/pentops/protostate v0.0.0-20250324023023-a72be074893a
-	github.com/pentops/realms v0.0.0-20250305163009-613fe9868ed8
+	github.com/pentops/protostate v0.0.0-20250410211811-0e53bf187205
+	github.com/pentops/realms v0.0.0-20250327015025-d65dc0463c4e
 	github.com/pentops/runner v0.0.0-20250116202335-8635b2a42547
 	github.com/pentops/sqrlx.go v0.0.0-20250324231942-5f3ef6c21f8e
 	github.com/pressly/goose v2.7.0+incompatible
-	google.golang.org/genproto/googleapis/api v0.0.0-20250313205543-e70fdf4c4cb4
+	google.golang.org/genproto/googleapis/api v0.0.0-20250324211829-b45e905df463
 	google.golang.org/grpc v1.71.0
-	google.golang.org/protobuf v1.36.5
+	google.golang.org/protobuf v1.36.6
 )
 
 require (
@@ -42,5 +42,5 @@ require (
 	golang.org/x/net v0.37.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250313205543-e70fdf4c4cb4 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250324211829-b45e905df463 // indirect
 )

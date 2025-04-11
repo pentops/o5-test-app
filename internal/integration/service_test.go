@@ -16,7 +16,6 @@ import (
 )
 
 func TestService(t *testing.T) {
-
 	flow, uu := NewUniverse(t)
 	defer flow.RunSteps(t)
 
@@ -38,10 +37,10 @@ func TestService(t *testing.T) {
 		t.Equal(TestVersion, res.Greeting.Data.AppVersion)
 		t.Equal(test_pb.GreetingStatus_INITIATED, res.Greeting.Status)
 
-		requestMessage = &test_tpb.GreetingMessage{}
-		uu.Outbox.PopMessage(t, requestMessage)
-
+		requestMessage = uu.PopGreeting(t)
 		t.Equal(greetingID, requestMessage.GreetingId)
+
+		uu.PopGreetingEvent(t)
 	})
 
 	flow.Step("Reply", func(ctx context.Context, t flowtest.Asserter) {
@@ -50,6 +49,8 @@ func TestService(t *testing.T) {
 		if res == nil {
 			t.Errorf("res is nil, shoud be empty")
 		}
+
+		uu.PopGreetingEvent(t)
 	})
 
 	flow.Step("Check", func(ctx context.Context, t flowtest.Asserter) {
@@ -60,11 +61,9 @@ func TestService(t *testing.T) {
 		t.NoError(err)
 		t.Equal("Hello World", *greeting.Greeting.Data.ReplyMessage)
 	})
-
 }
 
 func TestThrowError(t *testing.T) {
-
 	flow, uu := NewUniverse(t)
 	defer flow.RunSteps(t)
 
@@ -123,11 +122,9 @@ func TestThrowError(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 	})
-
 }
 
 func TestMessageError(t *testing.T) {
-
 	flow, uu := NewUniverse(t)
 	defer flow.RunSteps(t)
 
@@ -149,13 +146,14 @@ func TestMessageError(t *testing.T) {
 			t.Fatalf("expected no error here, should be passed to the worker: %s", err)
 		}
 
-		requestMessage = &test_tpb.GreetingMessage{}
-		uu.Outbox.PopMessage(t, requestMessage)
+		requestMessage = uu.PopGreeting(t)
 
 		t.Equal(greetingID, requestMessage.GreetingId)
 		if requestMessage.WorkerError == nil {
 			t.Errorf("expected worker error to be set")
 		}
+
+		uu.PopGreetingEvent(t)
 	})
 
 	flow.Step("Reply", func(ctx context.Context, t flowtest.Asserter) {
@@ -172,7 +170,5 @@ func TestMessageError(t *testing.T) {
 		if codeErr.Code() != codes.InvalidArgument {
 			t.Fatalf("expected InvalidArgument, got: %v", codeErr.Code())
 		}
-
 	})
-
 }

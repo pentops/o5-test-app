@@ -67,3 +67,15 @@ func setupUniverse(ctx context.Context, t flowtest.Asserter, uu *Universe) {
 
 	grpcPair.ServeUntilDone(t, ctx)
 }
+
+func (uu *Universe) PopGreetingEvent(t flowtest.TB) *test_tpb.GreetingEventMessage {
+	msg := &test_tpb.GreetingEventMessage{}
+	uu.Outbox.PopMessage(t, msg)
+	return msg
+}
+
+func (uu *Universe) PopGreeting(t flowtest.TB) *test_tpb.GreetingMessage {
+	requestMessage := &test_tpb.GreetingMessage{}
+	uu.Outbox.PopMessage(t, requestMessage)
+	return requestMessage
+}

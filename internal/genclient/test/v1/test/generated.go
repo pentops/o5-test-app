@@ -118,7 +118,7 @@ type GreetingGetResponse struct {
 // GreetingListRequest
 type GreetingListRequest struct {
 	Page  *list.PageRequest  `json:"-" query:"page"`
-	Query *list.QueryRequest `query:"query" json:"-"`
+	Query *list.QueryRequest `json:"-" query:"query"`
 }
 
 func (s *GreetingListRequest) SetPageToken(pageToken string) {
@@ -256,24 +256,18 @@ type HelloResponse struct {
 	Greeting *GreetingState `json:"greeting"`
 }
 
-// GreetingEvent Proto: GreetingEvent
-type GreetingEvent struct {
-	Metadata   *state.EventMetadata `json:"metadata"`
-	GreetingId string               `json:"greetingId"`
-	Event      *GreetingEventType   `json:"event"`
-}
-
-// TestError Proto: TestError
-type TestError struct {
-	Message string `json:"message,omitempty"`
-	Code    uint32 `json:"code,omitempty"`
-}
-
 // GreetingData Proto: GreetingData
 type GreetingData struct {
 	Name         string  `json:"name,omitempty"`
 	ReplyMessage *string `json:"replyMessage,omitempty"`
 	AppVersion   string  `json:"appVersion,omitempty"`
+}
+
+// GreetingEvent Proto: GreetingEvent
+type GreetingEvent struct {
+	Metadata   *state.EventMetadata `json:"metadata"`
+	GreetingId string               `json:"greetingId"`
+	Event      *GreetingEventType   `json:"event"`
 }
 
 // GreetingEventType Proto Oneof: test.v1.GreetingEventType
@@ -303,11 +297,6 @@ func (s GreetingEventType) Type() interface{} {
 	return nil
 }
 
-// GreetingEventType_Replied Proto: GreetingEventType_Replied
-type GreetingEventType_Replied struct {
-	ReplyMessage string `json:"replyMessage,omitempty"`
-}
-
 // GreetingEventType_Initiated Proto: GreetingEventType_Initiated
 type GreetingEventType_Initiated struct {
 	Name        string     `json:"name,omitempty"`
@@ -316,14 +305,10 @@ type GreetingEventType_Initiated struct {
 	WorkerError *TestError `json:"workerError,omitempty"`
 }
 
-// GreetingStatus Proto Enum: test.v1.GreetingStatus
-type GreetingStatus string
-
-const (
-	GreetingStatus_UNSPECIFIED GreetingStatus = "UNSPECIFIED"
-	GreetingStatus_INITIATED   GreetingStatus = "INITIATED"
-	GreetingStatus_REPLIED     GreetingStatus = "REPLIED"
-)
+// GreetingEventType_Replied Proto: GreetingEventType_Replied
+type GreetingEventType_Replied struct {
+	ReplyMessage string `json:"replyMessage,omitempty"`
+}
 
 // GreetingKeys Proto: GreetingKeys
 type GreetingKeys struct {
@@ -336,6 +321,21 @@ type GreetingState struct {
 	GreetingId string               `json:"greetingId"`
 	Data       *GreetingData        `json:"data"`
 	Status     GreetingStatus       `json:"status"`
+}
+
+// GreetingStatus Proto Enum: test.v1.GreetingStatus
+type GreetingStatus string
+
+const (
+	GreetingStatus_UNSPECIFIED GreetingStatus = "UNSPECIFIED"
+	GreetingStatus_INITIATED   GreetingStatus = "INITIATED"
+	GreetingStatus_REPLIED     GreetingStatus = "REPLIED"
+)
+
+// TestError Proto: TestError
+type TestError struct {
+	Message string `json:"message,omitempty"`
+	Code    uint32 `json:"code,omitempty"`
 }
 
 // CombinedClient
