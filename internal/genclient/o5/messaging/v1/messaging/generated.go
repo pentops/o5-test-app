@@ -9,9 +9,9 @@ import (
 
 // Any Proto: Any
 type Any struct {
-	TypeUrl  string `json:"typeUrl,omitempty"`
-	Value    []byte `json:"value,omitempty"`
-	Encoding string `json:"encoding,omitempty"`
+	TypeUrl  string       `json:"typeUrl,omitempty"`
+	Value    []byte       `json:"value,omitempty"`
+	Encoding WireEncoding `json:"encoding,omitempty"`
 }
 
 // Message Proto: Message
@@ -29,9 +29,39 @@ type Message struct {
 	Reply            *Message_Reply    `json:"reply,omitempty"`
 }
 
+// Message_Reply Proto: Message_Reply
+type Message_Reply struct {
+	ReplyTo string `json:"replyTo,omitempty"`
+}
+
 // Message_Request Proto: Message_Request
 type Message_Request struct {
 	ReplyTo string `json:"replyTo,omitempty"`
+}
+
+// WireEncoding Proto Enum: o5.messaging.v1.WireEncoding
+type WireEncoding string
+
+const (
+	WireEncoding_UNSPECIFIED WireEncoding = "UNSPECIFIED"
+	WireEncoding_PROTOJSON   WireEncoding = "PROTOJSON"
+	WireEncoding_RAW         WireEncoding = "RAW"
+)
+
+// DeadMessage Proto: DeadMessage
+type DeadMessage struct {
+	DeathId    string   `json:"deathId,omitempty"`
+	HandlerApp string   `json:"handlerApp,omitempty"`
+	HandlerEnv string   `json:"handlerEnv,omitempty"`
+	Message    *Message `json:"message,omitempty"`
+	Problem    *Problem `json:"problem,omitempty"`
+	Infra      *Infra   `json:"infra,omitempty"`
+}
+
+// Infra Proto: Infra
+type Infra struct {
+	Type     string            `json:"type,omitempty"`
+	Metadata map[string]string `json:"metadata,omitempty"`
 }
 
 // Problem Proto Oneof: o5.messaging.v1.Problem
@@ -52,36 +82,6 @@ func (s Problem) Type() interface{} {
 		return s.UnhandledError
 	}
 	return nil
-}
-
-// WireEncoding Proto Enum: o5.messaging.v1.WireEncoding
-type WireEncoding string
-
-const (
-	WireEncoding_UNSPECIFIED WireEncoding = "UNSPECIFIED"
-	WireEncoding_PROTOJSON   WireEncoding = "PROTOJSON"
-	WireEncoding_RAW         WireEncoding = "RAW"
-)
-
-// Infra Proto: Infra
-type Infra struct {
-	Type     string            `json:"type,omitempty"`
-	Metadata map[string]string `json:"metadata,omitempty"`
-}
-
-// DeadMessage Proto: DeadMessage
-type DeadMessage struct {
-	DeathId    string   `json:"deathId,omitempty"`
-	HandlerApp string   `json:"handlerApp,omitempty"`
-	HandlerEnv string   `json:"handlerEnv,omitempty"`
-	Message    *Message `json:"message,omitempty"`
-	Problem    *Problem `json:"problem,omitempty"`
-	Infra      *Infra   `json:"infra,omitempty"`
-}
-
-// Message_Reply Proto: Message_Reply
-type Message_Reply struct {
-	ReplyTo string `json:"replyTo,omitempty"`
 }
 
 // Problem_UnhandledError Proto: Problem_UnhandledError

@@ -1,0 +1,14 @@
+package test.v1
+
+topic Test publish {
+	message Greeting {
+		field greetingId ! key:uuid
+		field name ! string
+
+		field workerError object:TestError {
+			| When not-nil, the handler will throw an error back to the sidecar
+			| which should result in a dead letter.
+		}
+	}
+}
+

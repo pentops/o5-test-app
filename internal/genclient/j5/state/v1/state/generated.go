@@ -5,50 +5,18 @@ package state
 
 import (
 	auth "github.com/pentops/o5-test-app/internal/genclient/j5/auth/v1/auth"
+	messaging "github.com/pentops/o5-test-app/internal/genclient/j5/messaging/v1/messaging"
 	time "time"
 )
 
-// PSMEventCause Proto: PSMEventCause
-type PSMEventCause struct {
-	EventId      string `json:"eventId,omitempty"`
-	StateMachine string `json:"stateMachine,omitempty"`
-}
-
-// ReplyCause Proto: ReplyCause
-type ReplyCause struct {
-	Request *PSMEventCause `json:"request,omitempty"`
-	Async   bool           `json:"async,omitempty"`
-}
-
-// EventMetadata Proto: EventMetadata
-type EventMetadata struct {
-	EventId   string     `json:"eventId,omitempty"`
-	Sequence  uint64     `json:"sequence,omitempty"`
-	Timestamp *time.Time `json:"timestamp"`
-	Cause     *Cause     `json:"cause,omitempty"`
-}
-
-// ExternalEventCause Proto: ExternalEventCause
-type ExternalEventCause struct {
-	SystemName string  `json:"systemName,omitempty"`
-	EventName  string  `json:"eventName,omitempty"`
-	ExternalId *string `json:"externalId,omitempty"`
-}
-
-// StateMetadata Proto: StateMetadata
-type StateMetadata struct {
-	CreatedAt    *time.Time `json:"createdAt,omitempty"`
-	UpdatedAt    *time.Time `json:"updatedAt,omitempty"`
-	LastSequence uint64     `json:"lastSequence,omitempty"`
-}
-
 // Cause Proto Oneof: j5.state.v1.Cause
 type Cause struct {
-	J5TypeKey     string              `json:"!type,omitempty"`
-	PsmEvent      *PSMEventCause      `json:"psmEvent,omitempty"`
-	Command       *auth.Action        `json:"command,omitempty"`
-	ExternalEvent *ExternalEventCause `json:"externalEvent,omitempty"`
-	Reply         *ReplyCause         `json:"reply,omitempty"`
+	J5TypeKey     string                  `json:"!type,omitempty"`
+	PsmEvent      *PSMEventCause          `json:"psmEvent,omitempty"`
+	Command       *auth.Action            `json:"command,omitempty"`
+	Message       *messaging.MessageCause `json:"message,omitempty"`
+	ExternalEvent *ExternalEventCause     `json:"externalEvent,omitempty"`
+	Init          *InitCause              `json:"init,omitempty"`
 }
 
 func (s Cause) OneofKey() string {
@@ -58,11 +26,14 @@ func (s Cause) OneofKey() string {
 	if s.Command != nil {
 		return "command"
 	}
+	if s.Message != nil {
+		return "message"
+	}
 	if s.ExternalEvent != nil {
 		return "externalEvent"
 	}
-	if s.Reply != nil {
-		return "reply"
+	if s.Init != nil {
+		return "init"
 	}
 	return ""
 }
@@ -74,11 +45,46 @@ func (s Cause) Type() interface{} {
 	if s.Command != nil {
 		return s.Command
 	}
+	if s.Message != nil {
+		return s.Message
+	}
 	if s.ExternalEvent != nil {
 		return s.ExternalEvent
 	}
-	if s.Reply != nil {
-		return s.Reply
+	if s.Init != nil {
+		return s.Init
 	}
 	return nil
+}
+
+// EventMetadata Proto: EventMetadata
+type EventMetadata struct {
+	EventId   string     `json:"eventId,omitempty"`
+	Sequence  uint64     `json:"sequence,omitempty,string"`
+	Timestamp *time.Time `json:"timestamp"`
+	Cause     *Cause     `json:"cause,omitempty"`
+}
+
+// ExternalEventCause Proto: ExternalEventCause
+type ExternalEventCause struct {
+	SystemName string  `json:"systemName,omitempty"`
+	EventName  string  `json:"eventName,omitempty"`
+	ExternalId *string `json:"externalId,omitempty"`
+}
+
+// InitCause Proto: InitCause
+type InitCause struct {
+}
+
+// PSMEventCause Proto: PSMEventCause
+type PSMEventCause struct {
+	EventId      string `json:"eventId,omitempty"`
+	StateMachine string `json:"stateMachine,omitempty"`
+}
+
+// StateMetadata Proto: StateMetadata
+type StateMetadata struct {
+	CreatedAt    *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt    *time.Time `json:"updatedAt,omitempty"`
+	LastSequence uint64     `json:"lastSequence,omitempty,string"`
 }

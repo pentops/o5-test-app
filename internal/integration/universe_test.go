@@ -11,6 +11,7 @@ import (
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 	"github.com/pentops/o5-test-app/internal/service"
 	"github.com/pentops/pgtest.go/pgtest"
+	"github.com/pentops/sqrlx.go/sqrlx"
 )
 
 type Universe struct {
@@ -47,18 +48,34 @@ func setupUniverse(ctx context.Context, t flowtest.Asserter, uu *Universe) {
 	t.Helper()
 
 	conn := pgtest.GetTestDB(t, pgtest.WithDir("../../ext/db"))
+	db := sqrlx.NewPostgres(conn)
 
 	uu.Outbox = outboxtest.NewOutboxAsserter(t, conn)
 
 	grpcPair := flowtest.NewGRPCPair(t, service.GRPCMiddleware(TestVersion)...)
 
-	if err := service.RegisterGRPC(grpcPair.Server, conn, TestVersion); err != nil {
+	app, err := service.NewApp(db, TestVersion)
+	if err != nil {
 		t.Fatal(err.Error())
 	}
+
+	app.RegisterGRPC(grpcPair.Server)
 
 	uu.GreetingCommand = test_spb.NewGreetingCommandServiceClient(grpcPair.Client)
 	uu.GreetingQuery = test_spb.NewGreetingQueryServiceClient(grpcPair.Client)
 	uu.TestTopic = test_tpb.NewTestTopicClient(grpcPair.Client)
 
 	grpcPair.ServeUntilDone(t, ctx)
+}
+
+func (uu *Universe) PopGreetingEvent(t flowtest.TB) *test_tpb.GreetingEventMessage {
+	msg := &test_tpb.GreetingEventMessage{}
+	uu.Outbox.PopMessage(t, msg)
+	return msg
+}
+
+func (uu *Universe) PopGreeting(t flowtest.TB) *test_tpb.GreetingMessage {
+	requestMessage := &test_tpb.GreetingMessage{}
+	uu.Outbox.PopMessage(t, requestMessage)
+	return requestMessage
 }

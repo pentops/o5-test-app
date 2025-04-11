@@ -3,37 +3,24 @@ package state
 import (
 	"context"
 
-	"github.com/pentops/o5-messaging/o5msg"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_pb"
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
-	"github.com/pentops/protostate/psm"
 )
-
-type batonSender struct {
-	o5msg.TopicSet
-}
-
-func (bs *batonSender) Collect(tb test_pb.GreetingPSMHookBaton, msg o5msg.Message) {
-	tb.SideEffect(msg)
-}
 
 func NewGreetingPSM() (*test_pb.GreetingPSM, error) {
 	sm, err := test_pb.GreetingPSMBuilder().
-		SystemActor(psm.MustSystemActor("216B6C2E-D996-492C-B80C-9AAD0CCFEEC4")).
 		BuildStateMachine()
-
 	if err != nil {
 		return nil, err
 	}
 
-	bs := &batonSender{}
-	greetingTopic := test_tpb.NewTestTopicCollector(bs)
+	sm.PublishEvent(test_tpb.PublishGreeting())
 
 	sm.From(0).
 		OnEvent(test_pb.GreetingPSMEventInitiated).
 		SetStatus(test_pb.GreetingStatus_INITIATED).
 		Mutate(test_pb.GreetingPSMMutation(func(
-			state *test_pb.GreetingStateData,
+			state *test_pb.GreetingData,
 			event *test_pb.GreetingEventType_Initiated,
 		) error {
 			state.Name = event.Name
@@ -52,7 +39,7 @@ func NewGreetingPSM() (*test_pb.GreetingPSM, error) {
 				WorkerError: event.WorkerError,
 			}
 
-			greetingTopic.Greeting(tb, msg)
+			tb.SideEffect(msg)
 
 			return nil
 		}))
@@ -61,7 +48,7 @@ func NewGreetingPSM() (*test_pb.GreetingPSM, error) {
 		OnEvent(test_pb.GreetingPSMEventReplied).
 		SetStatus(test_pb.GreetingStatus_REPLIED).
 		Mutate(test_pb.GreetingPSMMutation(func(
-			state *test_pb.GreetingStateData,
+			state *test_pb.GreetingData,
 			event *test_pb.GreetingEventType_Replied,
 		) error {
 			state.ReplyMessage = &event.ReplyMessage

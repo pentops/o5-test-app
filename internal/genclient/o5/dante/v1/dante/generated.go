@@ -330,41 +330,11 @@ type DeadMessageData struct {
 	CurrentVersion *DeadMessageVersion    `json:"currentVersion,omitempty"`
 }
 
-// DeadMessageVersion_SQSMessage Proto: DeadMessageVersion_SQSMessage
-type DeadMessageVersion_SQSMessage struct {
-	QueueUrl   string            `json:"queueUrl,omitempty"`
-	Attributes map[string]string `json:"attributes,omitempty"`
-}
-
 // DeadMessageEvent Proto: DeadMessageEvent
 type DeadMessageEvent struct {
 	Metadata  *state.EventMetadata  `json:"metadata"`
 	MessageId string                `json:"messageId,omitempty"`
 	Event     *DeadMessageEventType `json:"event"`
-}
-
-// DeadMessageEventType_Replayed Proto: DeadMessageEventType_Replayed
-type DeadMessageEventType_Replayed struct {
-}
-
-// DeadMessageVersion Proto: DeadMessageVersion
-type DeadMessageVersion struct {
-	VersionId  string                         `json:"versionId,omitempty"`
-	Message    *messaging.Message             `json:"message,omitempty"`
-	SqsMessage *DeadMessageVersion_SQSMessage `json:"sqsMessage,omitempty"`
-}
-
-// DeadMessageState Proto: DeadMessageState
-type DeadMessageState struct {
-	Metadata  *state.StateMetadata `json:"metadata"`
-	MessageId string               `json:"messageId,omitempty"`
-	Status    string               `json:"status,omitempty"`
-	Data      *DeadMessageData     `json:"data,omitempty"`
-}
-
-// DeadMessageEventType_Rejected Proto: DeadMessageEventType_Rejected
-type DeadMessageEventType_Rejected struct {
-	Reason string `json:"reason,omitempty"`
 }
 
 // DeadMessageEventType Proto Oneof: o5.dante.v1.DeadMessageEventType
@@ -408,9 +378,18 @@ func (s DeadMessageEventType) Type() interface{} {
 	return nil
 }
 
-// DeadMessageKeys Proto: DeadMessageKeys
-type DeadMessageKeys struct {
-	MessageId string `json:"messageId,omitempty"`
+// DeadMessageEventType_Notified Proto: DeadMessageEventType_Notified
+type DeadMessageEventType_Notified struct {
+	Notification *messaging.DeadMessage `json:"notification,omitempty"`
+}
+
+// DeadMessageEventType_Rejected Proto: DeadMessageEventType_Rejected
+type DeadMessageEventType_Rejected struct {
+	Reason string `json:"reason,omitempty"`
+}
+
+// DeadMessageEventType_Replayed Proto: DeadMessageEventType_Replayed
+type DeadMessageEventType_Replayed struct {
 }
 
 // DeadMessageEventType_Updated Proto: DeadMessageEventType_Updated
@@ -418,9 +397,30 @@ type DeadMessageEventType_Updated struct {
 	Spec *DeadMessageVersion `json:"spec,omitempty"`
 }
 
-// DeadMessageEventType_Notified Proto: DeadMessageEventType_Notified
-type DeadMessageEventType_Notified struct {
-	Notification *messaging.DeadMessage `json:"notification,omitempty"`
+// DeadMessageKeys Proto: DeadMessageKeys
+type DeadMessageKeys struct {
+	MessageId string `json:"messageId,omitempty"`
+}
+
+// DeadMessageState Proto: DeadMessageState
+type DeadMessageState struct {
+	Metadata  *state.StateMetadata `json:"metadata"`
+	MessageId string               `json:"messageId,omitempty"`
+	Status    MessageStatus        `json:"status,omitempty"`
+	Data      *DeadMessageData     `json:"data,omitempty"`
+}
+
+// DeadMessageVersion Proto: DeadMessageVersion
+type DeadMessageVersion struct {
+	VersionId  string                         `json:"versionId,omitempty"`
+	Message    *messaging.Message             `json:"message,omitempty"`
+	SqsMessage *DeadMessageVersion_SQSMessage `json:"sqsMessage,omitempty"`
+}
+
+// DeadMessageVersion_SQSMessage Proto: DeadMessageVersion_SQSMessage
+type DeadMessageVersion_SQSMessage struct {
+	QueueUrl   string            `json:"queueUrl,omitempty"`
+	Attributes map[string]string `json:"attributes,omitempty"`
 }
 
 // MessageStatus Proto Enum: o5.dante.v1.MessageStatus
@@ -436,13 +436,13 @@ const (
 
 // CombinedClient
 type CombinedClient struct {
-	*DeadMessageQueryService
 	*DeadMessageCommandService
+	*DeadMessageQueryService
 }
 
 func NewCombinedClient(requester Requester) *CombinedClient {
 	return &CombinedClient{
-		DeadMessageQueryService:   NewDeadMessageQueryService(requester),
 		DeadMessageCommandService: NewDeadMessageCommandService(requester),
+		DeadMessageQueryService:   NewDeadMessageQueryService(requester),
 	}
 }
