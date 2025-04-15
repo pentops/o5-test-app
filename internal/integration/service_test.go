@@ -21,6 +21,7 @@ func TestService(t *testing.T) {
 
 	// Variables which cross step boundaries are declared
 	var greetingID string
+
 	var requestMessage *test_tpb.GreetingMessage
 
 	flow.Step("Hello", func(ctx context.Context, t flowtest.Asserter) {
@@ -61,6 +62,7 @@ func TestService(t *testing.T) {
 		t.NoError(err)
 		t.Equal("Hello World", *greeting.Greeting.Data.ReplyMessage)
 	})
+
 }
 
 func TestThrowError(t *testing.T) {

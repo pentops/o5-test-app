@@ -9,7 +9,7 @@ generate:
       - local: test
     output: .
     mods:
-      - goPackageNames: 
+      - goPackageNames:
           prefix: github.com/pentops/o5-test-app/internal/gen
     opts:
       paths: import
@@ -27,6 +27,9 @@ generate:
       - registry:
           owner: pentops
           name: dante
+      - registry:
+          owner: pentops
+          name: ges
     output: ./internal/genclient
     plugins:
       - base: go-client

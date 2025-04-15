@@ -6,8 +6,10 @@ toolchain go1.24.1
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250307204501-0409229c3780.1
+	github.com/elgris/sqrl v0.0.0-20210727210741-7e0198b30236
 	github.com/google/uuid v1.6.0
 	github.com/pentops/flowtest v0.0.0-20250403234635-311159fa1e81
+	github.com/pentops/golib v0.0.0-20250326060930-8c83d58ddb63
 	github.com/pentops/grpc.go v0.0.0-20250326042738-bcdfc2b43fa9
 	github.com/pentops/j5 v0.0.0-20250407052915-b2fc017d8ac2
 	github.com/pentops/log.go v0.0.15
@@ -27,7 +29,6 @@ require (
 	cel.dev/expr v0.22.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/bufbuild/protovalidate-go v0.9.2 // indirect
-	github.com/elgris/sqrl v0.0.0-20210727210741-7e0198b30236 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/google/cel-go v0.24.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect

@@ -14,6 +14,7 @@ func Run(ctx context.Context, cfg *universe.APIConfig, tags []string) error {
 	testSet.Register(2, "HandlerError", universe.UniverseWrapper(cfg, HandlerErrorTests))
 
 	testSet.Register(3, "WorkerErrorTests", universe.UniverseWrapper(cfg, WorkerErrorTests), "name=worker-error")
+	testSet.Register(4, "ReplayTests", universe.UniverseWrapper(cfg, ReplayTests))
 
 	return testSet.Run(ctx, tags)
 }

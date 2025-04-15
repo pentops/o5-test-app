@@ -65,6 +65,21 @@ type EventMetadata struct {
 	Cause     *Cause     `json:"cause,omitempty"`
 }
 
+// EventPublishMetadata Proto: EventPublishMetadata
+type EventPublishMetadata struct {
+	EventId   string       `json:"eventId,omitempty"`
+	Sequence  uint64       `json:"sequence,omitempty,string"`
+	Timestamp *time.Time   `json:"timestamp"`
+	Cause     *Cause       `json:"cause,omitempty"`
+	Auth      *PublishAuth `json:"auth,omitempty"`
+}
+
+// EventTenant Proto: EventTenant
+type EventTenant struct {
+	TenantType string `json:"tenantType,omitempty"`
+	TenantId   string `json:"tenantId,omitempty"`
+}
+
 // ExternalEventCause Proto: ExternalEventCause
 type ExternalEventCause struct {
 	SystemName string  `json:"systemName,omitempty"`
@@ -80,6 +95,12 @@ type InitCause struct {
 type PSMEventCause struct {
 	EventId      string `json:"eventId,omitempty"`
 	StateMachine string `json:"stateMachine,omitempty"`
+}
+
+// PublishAuth Proto: PublishAuth
+type PublishAuth struct {
+	RequiredScopes []string       `json:"requiredScopes,omitempty"`
+	TenantKeys     []*EventTenant `json:"tenantKeys,omitempty"`
 }
 
 // StateMetadata Proto: StateMetadata

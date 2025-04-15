@@ -23,10 +23,15 @@ func main() {
 		}
 	}
 
-	domain := os.Getenv("O5_E2E_DOMAIN")
+	apiRoot := os.Getenv("O5_API")
+	if apiRoot == "" {
+		fmt.Println("O5_API is not set")
+		os.Exit(1)
+	}
+
 	cfg := &universe.APIConfig{
-		APIRoot:     fmt.Sprintf("https://o5.%s", domain),
-		MetaRoot:    fmt.Sprintf("https://o5.%s", domain),
+		APIRoot:     apiRoot,
+		MetaRoot:    apiRoot,
 		BearerToken: os.Getenv("O5_BEARER"),
 	}
 
@@ -48,8 +53,8 @@ func loadEnv(filename string) error {
 		return err
 	}
 
-	lines := strings.Split(string(fileData), "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(string(fileData), "\n")
+	for line := range lines {
 		if strings.HasPrefix(line, "#") {
 			continue
 		}

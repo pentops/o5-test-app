@@ -1,0 +1,24 @@
+package test.v1
+
+service EventLog {
+	basePath = "/test/v1/eventlog"
+	method GetMessages {
+		httpMethod = "GET"
+		httpPath = "/messages"
+
+		request {
+			field greetingId ? key:uuid
+			field eventId ? key:uuid
+		}
+		response {
+			field messages array:object:Message
+		}
+	}
+}
+
+object Message {
+	field greetingId ! key:uuid 
+	field eventId ! key:uuid
+	field messageId ! string
+	field timestamp ! timestamp
+}
