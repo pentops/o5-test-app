@@ -58,18 +58,15 @@ func ReplayTests(flow flowtest.StepSetter, uu *universe.Universe) {
 		t.Error("Messages not found")
 	})
 
-	flow.Step("Messages in GES", func(ctx context.Context, t flowtest.Asserter) {
-		_, err := gesClient.ReplayEvents(ctx, &ges.ReplayEventsRequest{
-			QueueUrl:    uu.ReplayQueueURL,
-			GrpcService: "test.v1.topic.GreetingPublishTopic",
-			GrpcMethod:  "GreetingEvent",
-		})
-		t.NoError(err)
-	})
-
 	flow.Step("Replay Messages in Test", func(ctx context.Context, t flowtest.Asserter) {
-
 		for ii := 0; ii < 10; ii++ {
+			// re-trigger replay on each iteration, as this is a race
+			_, err := gesClient.ReplayEvents(ctx, &ges.ReplayEventsRequest{
+				QueueUrl:    uu.ReplayQueueURL,
+				GrpcService: "test.v1.topic.GreetingPublishTopic",
+				GrpcMethod:  "GreetingEvent",
+			})
+			t.NoError(err)
 			reply, err := logClient.GetMessages(ctx, &test.GetMessagesRequest{
 				GreetingId: gl.Ptr(greetingID),
 			})
