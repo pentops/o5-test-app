@@ -106,7 +106,7 @@ func (s QueryService) EventsList(ctx context.Context, req *EventsListRequest) (*
 		path += "?" + query.Encode()
 	}
 	resp := &EventsListResponse{}
-	err := s.Request(ctx, "GET", path, req, resp)
+	err := s.Request(ctx, "GET", path, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func (s QueryService) UpsertList(ctx context.Context, req *UpsertListRequest) (*
 		path += "?" + query.Encode()
 	}
 	resp := &UpsertListResponse{}
-	err := s.Request(ctx, "GET", path, req, resp)
+	err := s.Request(ctx, "GET", path, nil, resp)
 	if err != nil {
 		return nil, err
 	}

@@ -29,10 +29,17 @@ func main() {
 		os.Exit(1)
 	}
 
+	replayQueueURL := os.Getenv("REPLAY_QUEUE_URL")
+	if replayQueueURL == "" {
+		fmt.Println("REPLAY_QUEUE_URL is not set")
+		os.Exit(1)
+	}
+
 	cfg := &universe.APIConfig{
-		APIRoot:     apiRoot,
-		MetaRoot:    apiRoot,
-		BearerToken: os.Getenv("O5_BEARER"),
+		APIRoot:        apiRoot,
+		MetaRoot:       apiRoot,
+		BearerToken:    os.Getenv("O5_BEARER"),
+		ReplayQueueURL: replayQueueURL,
 	}
 
 	ctx := context.Background()

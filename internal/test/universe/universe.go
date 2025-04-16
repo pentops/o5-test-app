@@ -8,14 +8,16 @@ import (
 )
 
 type Universe struct {
-	Client     *testclient.API
-	MetaClient *testclient.API
+	Client         *testclient.API
+	MetaClient     *testclient.API
+	ReplayQueueURL string
 }
 
 type APIConfig struct {
-	APIRoot     string
-	MetaRoot    string
-	BearerToken string
+	APIRoot        string
+	MetaRoot       string
+	BearerToken    string
+	ReplayQueueURL string
 }
 
 func UniverseWrapper(cfg *APIConfig, callback func(flow flowtest.StepSetter, uu *Universe)) func(flow flowtest.StepSetter) {
@@ -44,6 +46,7 @@ func UniverseWrapper(cfg *APIConfig, callback func(flow flowtest.StepSetter, uu 
 
 			metaClient.Logger = LogAPIRequest(flow)
 			universe.MetaClient = metaClient
+			universe.ReplayQueueURL = cfg.ReplayQueueURL
 
 			return nil
 		})

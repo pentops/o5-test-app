@@ -43,7 +43,7 @@ func (s EventLogService) GetMessages(ctx context.Context, req *GetMessagesReques
 		path += "?" + query.Encode()
 	}
 	resp := &GetMessagesResponse{}
-	err := s.Request(ctx, "GET", path, req, resp)
+	err := s.Request(ctx, "GET", path, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (s GreetingQueryService) GreetingGet(ctx context.Context, req *GreetingGetR
 		path += "?" + query.Encode()
 	}
 	resp := &GreetingGetResponse{}
-	err := s.Request(ctx, "GET", path, req, resp)
+	err := s.Request(ctx, "GET", path, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (s GreetingQueryService) GreetingList(ctx context.Context, req *GreetingLis
 		path += "?" + query.Encode()
 	}
 	resp := &GreetingListResponse{}
-	err := s.Request(ctx, "GET", path, req, resp)
+	err := s.Request(ctx, "GET", path, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func (s GreetingQueryService) GreetingEvents(ctx context.Context, req *GreetingE
 		path += "?" + query.Encode()
 	}
 	resp := &GreetingEventsResponse{}
-	err := s.Request(ctx, "GET", path, req, resp)
+	err := s.Request(ctx, "GET", path, nil, resp)
 	if err != nil {
 		return nil, err
 	}

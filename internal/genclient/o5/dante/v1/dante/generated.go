@@ -155,7 +155,7 @@ func (s DeadMessageQueryService) GetDeadMessage(ctx context.Context, req *GetDea
 		path += "?" + query.Encode()
 	}
 	resp := &GetDeadMessageResponse{}
-	err := s.Request(ctx, "GET", path, req, resp)
+	err := s.Request(ctx, "GET", path, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func (s DeadMessageQueryService) ListDeadMessages(ctx context.Context, req *List
 		path += "?" + query.Encode()
 	}
 	resp := &ListDeadMessagesResponse{}
-	err := s.Request(ctx, "GET", path, req, resp)
+	err := s.Request(ctx, "GET", path, nil, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (s DeadMessageQueryService) ListDeadMessageEvents(ctx context.Context, req 
 		path += "?" + query.Encode()
 	}
 	resp := &ListDeadMessageEventsResponse{}
-	err := s.Request(ctx, "GET", path, req, resp)
+	err := s.Request(ctx, "GET", path, nil, resp)
 	if err != nil {
 		return nil, err
 	}

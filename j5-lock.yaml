@@ -5,3 +5,5 @@ inputs:
       version: cf9d6419c7cd3df56f0ca849ac19b8e2a0f794cc
     - name: registry/pentops/dante
       version: 08f4ac2f783c1c3ed39a7452a3d5a9d36b6a9c91
+    - name: registry/pentops/ges
+      version: c2da8fae672522c8381a7366239a573adf228cc6
