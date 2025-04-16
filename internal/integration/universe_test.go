@@ -11,6 +11,7 @@ import (
 	"github.com/pentops/o5-test-app/internal/gen/test/v1/test_tpb"
 	"github.com/pentops/o5-test-app/internal/service"
 	"github.com/pentops/pgtest.go/pgtest"
+	"github.com/pentops/realms/authtest"
 	"github.com/pentops/sqrlx.go/sqrlx"
 )
 
@@ -19,6 +20,8 @@ type Universe struct {
 	GreetingCommand test_spb.GreetingCommandServiceClient
 	GreetingQuery   test_spb.GreetingQueryServiceClient
 	TestTopic       test_tpb.TestTopicClient
+	EventLog        test_spb.EventLogServiceClient
+	GreetingPublish test_tpb.GreetingPublishTopicClient
 }
 
 func NewUniverse(t *testing.T) (*flowtest.Stepper[*testing.T], *Universe) {
@@ -52,7 +55,9 @@ func setupUniverse(ctx context.Context, t flowtest.Asserter, uu *Universe) {
 
 	uu.Outbox = outboxtest.NewOutboxAsserter(t, conn)
 
-	grpcPair := flowtest.NewGRPCPair(t, service.GRPCMiddleware(TestVersion)...)
+	middleware := service.GRPCMiddleware("testing")
+	middleware = append(middleware, authtest.AutoMessageGRPCMiddleware)
+	grpcPair := flowtest.NewGRPCPair(t, middleware...)
 
 	app, err := service.NewApp(db, TestVersion)
 	if err != nil {
@@ -64,6 +69,8 @@ func setupUniverse(ctx context.Context, t flowtest.Asserter, uu *Universe) {
 	uu.GreetingCommand = test_spb.NewGreetingCommandServiceClient(grpcPair.Client)
 	uu.GreetingQuery = test_spb.NewGreetingQueryServiceClient(grpcPair.Client)
 	uu.TestTopic = test_tpb.NewTestTopicClient(grpcPair.Client)
+	uu.EventLog = test_spb.NewEventLogServiceClient(grpcPair.Client)
+	uu.GreetingPublish = test_tpb.NewGreetingPublishTopicClient(grpcPair.Client)
 
 	grpcPair.ServeUntilDone(t, ctx)
 }

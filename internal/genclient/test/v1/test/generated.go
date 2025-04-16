@@ -11,10 +11,65 @@ import (
 	state "github.com/pentops/o5-test-app/internal/genclient/j5/state/v1/state"
 	url "net/url"
 	strings "strings"
+	time "time"
 )
 
 type Requester interface {
 	Request(ctx context.Context, method string, path string, body interface{}, response interface{}) error
+}
+
+// EventLogService
+type EventLogService struct {
+	Requester
+}
+
+func NewEventLogService(requester Requester) *EventLogService {
+	return &EventLogService{
+		Requester: requester,
+	}
+}
+
+func (s EventLogService) GetMessages(ctx context.Context, req *GetMessagesRequest) (*GetMessagesResponse, error) {
+	pathParts := make([]string, 5)
+	pathParts[0] = ""
+	pathParts[1] = "test"
+	pathParts[2] = "v1"
+	pathParts[3] = "eventlog"
+	pathParts[4] = "messages"
+	path := strings.Join(pathParts, "/")
+	if query, err := req.QueryParameters(); err != nil {
+		return nil, err
+	} else if len(query) > 0 {
+		path += "?" + query.Encode()
+	}
+	resp := &GetMessagesResponse{}
+	err := s.Request(ctx, "GET", path, req, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// GetMessagesRequest
+type GetMessagesRequest struct {
+	GreetingId *string `json:"-" query:"greetingId"`
+	EventId    *string `json:"-" query:"eventId"`
+}
+
+func (s GetMessagesRequest) QueryParameters() (url.Values, error) {
+	values := url.Values{}
+	if s.GreetingId != nil {
+		values.Set("greetingId", *s.GreetingId)
+	}
+	if s.EventId != nil {
+		values.Set("eventId", *s.EventId)
+	}
+	return values, nil
+}
+
+// GetMessagesResponse
+type GetMessagesResponse struct {
+	Messages []*Message `json:"messages,omitempty"`
 }
 
 // GreetingQueryService
@@ -332,6 +387,14 @@ const (
 	GreetingStatus_REPLIED     GreetingStatus = "REPLIED"
 )
 
+// Message Proto: Message
+type Message struct {
+	GreetingId string     `json:"greetingId"`
+	EventId    string     `json:"eventId"`
+	MessageId  string     `json:"messageId"`
+	Timestamp  *time.Time `json:"timestamp"`
+}
+
 // TestError Proto: TestError
 type TestError struct {
 	Message string `json:"message,omitempty"`
@@ -340,12 +403,14 @@ type TestError struct {
 
 // CombinedClient
 type CombinedClient struct {
+	*EventLogService
 	*GreetingCommandService
 	*GreetingQueryService
 }
 
 func NewCombinedClient(requester Requester) *CombinedClient {
 	return &CombinedClient{
+		EventLogService:        NewEventLogService(requester),
 		GreetingCommandService: NewGreetingCommandService(requester),
 		GreetingQueryService:   NewGreetingQueryService(requester),
 	}

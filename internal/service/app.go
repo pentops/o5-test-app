@@ -13,13 +13,18 @@ import (
 type App struct {
 	GreetingCommand *GreetingCommandService
 	GreetingQuery   *GreetingQueryService
+	TestAccess      *TestAccess
 	TestWorker      *TestWorker
+	PublishWorker   *PublishWorker
 }
 
 func (aa *App) RegisterGRPC(server grpc.ServiceRegistrar) {
 	aa.GreetingCommand.RegisterGRPC(server)
 	aa.GreetingQuery.RegisterGRPC(server)
 	aa.TestWorker.RegisterGRPC(server)
+	aa.TestAccess.RegisterGRPC(server)
+	aa.PublishWorker.RegisterGRPC(server)
+
 }
 
 func NewApp(db sqrlx.Transactor, appVersion string) (*App, error) {
@@ -43,10 +48,22 @@ func NewApp(db sqrlx.Transactor, appVersion string) (*App, error) {
 		return nil, err
 	}
 
+	testAccess, err := NewTestAccess(db)
+	if err != nil {
+		return nil, err
+	}
+
+	publishWorker, err := NewPublishWorker(db)
+	if err != nil {
+		return nil, err
+	}
+
 	return &App{
 		GreetingCommand: commandService,
 		GreetingQuery:   testQueryService,
 		TestWorker:      testWorker,
+		TestAccess:      testAccess,
+		PublishWorker:   publishWorker,
 	}, nil
 }
 
