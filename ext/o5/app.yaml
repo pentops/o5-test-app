@@ -29,6 +29,7 @@ runtimes:
         protocol: ROUTE_PROTOCOL_HTTP
     subscriptions:
       - name: "/test.v1.topic.TestTopic"
+      - name: "/test.v1.topic.GreetingPublishTopic"
     containers:
       - name: main
         demand: DEMAND_LIGHT
